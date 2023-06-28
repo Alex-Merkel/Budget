@@ -5,29 +5,23 @@
         <div class="container p-5 bg-dark">
             <div class="row">
                 <div class="d-md-flex bg-dark align-items-center justify-content-evenly">
-                    <h1 class="col text-center">User's user profile</h1>
+                    <h1 class="col text-center">User's profile</h1>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="text-center">
-    <div class="container p-10">
-        <div class="row"><br>
-            <h3>Here are your profile details:</h3>
-            <ul class="list-group py-5">
-                <li class="list-group-item">First name:</li>
-                <li class="list-group-item">Last name: </li> 
-                <li class="list-group-item">Email:</li>
-            </ul>
-        </div>
-        <div class="row" style="margin-top: 20px;">
-            <div class="col-4"></div>
-            <div class="col-3 p-10">
-                <img src="../../static/img/profileBackground.jpg" class="d-flex align-items-center justify-content-center p-50 img-fluid" alt="">
+    <div style="background-image: url('../../static/img/profileBackground.jpg'); background-size: cover;" class="vh-100">
+        <div class="container p-10">
+            <div>
+                <h2 class="text-center text-light pt-5" id="profile_header">Here are your profile details:</h2>
+                <ul class="list-group py-5">
+                    <li class="list-group-item">First name:</li>
+                    <li class="list-group-item">Last name: </li> 
+                    <li class="list-group-item">Email:</li>
+                </ul>
             </div>
-            <div class="col-3"></div>
         </div>
     </div>
-    </section>
+
 {% endblock %}

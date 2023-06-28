@@ -5,29 +5,41 @@
         <div class="container p-5 bg-dark">
             <div class="row">
                 <div class="d-md-flex bg-dark align-items-center justify-content-evenly">
-                    <h1 class="col text-center">User's Budget:</h1>
+                    <h1 class="col text-center">User's Budget</h1>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="text-center">
-    <div class="container p-10">
-        <div class="row"><br>
-            <h3>Here is your budget:</h3>
-            <ul class="list-group py-5">
-                <li class="list-group-item">First name:</li>
-                <li class="list-group-item">Last name: </li> 
-                <li class="list-group-item">Email:</li>
-            </ul>
-        </div>
-        <div class="row" style="margin-top: 20px;">
-            <div class="col-4"></div>
-            <div class="col-3 p-10">
-                <img src="../../static/img/budgetBackground.jpg" class="d-flex align-items-center justify-content-center p-50 img-fluid" alt="">
+    <div style="background-image: url('../../static/img/budgetBackground.jpg'); background-size: cover;" class="vh-100">
+        <div class="container p-10">
+            <div class="row">
+                <div class="col-4"></div>
+                <div class="col-3 p-10">
+                    <div class="grid-container">
+                        <div class="grid-item-left border-gray">Income</div>
+                        <div class="grid-item-left border-gray">Expenses</div>
+                        <div class="grid-item-left border-gray">Home</div>
+                        <div class="grid-item-left border-gray">Auto</div>
+                        <div class="grid-item-left border-gray">Food</div>
+                        <div class="grid-item-left border-gray">Utilities</div>
+                        <div class="grid-item-left border-gray">Gas</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="grid-container">
+                        <div class="grid-item-right border-gray"><!-- User input for income --></div>
+                        <div class="grid-item-right border-gray"><!-- User input for expenses --></div>
+                        <div class="grid-item-right border-gray"><!-- User input for home allotted amount --></div>
+                        <div class="grid-item-right border-gray"><!-- User input for auto allotted amount --></div>
+                        <div class="grid-item-right border-gray"><!-- User input for food allotted amount --></div>
+                        <div class="grid-item-right border-gray"><!-- User input for utilities allotted amount --></div>
+                        <div class="grid-item-right border-gray"><!-- User input for gas allotted amount --></div>
+                    </div>
+                </div>
             </div>
-            <div class="col-3"></div>
         </div>
     </div>
-    </section>
+    
+    
 {% endblock %}
