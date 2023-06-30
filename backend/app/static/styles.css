@@ -1,25 +1,18 @@
 .grid-container {
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: 10px;
-}
-
-.grid-item-left {
-    text-align: left;
-    border: 1px solid #ccc;
-    padding: 10px;
-}
-
-.grid-item-right {
-    text-align: right;
-    border: 1px solid #ccc;
-    padding: 10px;
+    grid-gap: 20px;
 }
 
 .border-gray {
-    border-color: #ccc;
+    border: 1px solid rgb(92, 184, 92)
 }
 
 #profile_header {
     text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
 }
+
+#budget_header {
+    text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
+}
+

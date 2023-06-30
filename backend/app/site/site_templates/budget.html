@@ -12,38 +12,89 @@
     </section>
 
     <div style="background-image: url('../../static/img/budgetBackground.jpg'); background-size: cover;" class="vh-100">
-        <div class="container text-light">
-            <div class="row">
-                <div class="row">
-                    <div class="text-center col-6 grid-item-left border-gray">Income</div>
-                    <div class="text-center col-6 grid-item-right border-gray">Total Expenses</div>
+        <div class="container">
+            <div class="row text-center" id="budget_header">
+                <div class="col-4">
+                    <h2>Total Income:</h2>
                 </div>
-                
-                <div class="col">
-                    <div class="grid-container">
-                        <div class="grid-item-left border-gray">Income</div>
-                        <div class="grid-item-left border-gray">Expenses</div>
-                        <div class="grid-item-left border-gray">Home</div>
-                        <div class="grid-item-left border-gray">Auto</div>
-                        <div class="grid-item-left border-gray">Food</div>
-                        <div class="grid-item-left border-gray">Utilities</div>
-                        <div class="grid-item-left border-gray">Gas</div>
+                <div class="col-4">
+                    <h2>Total Expenses:</h2>
+                </div>
+                <div class="col-4">
+                    <h2>Surplus/Deficit:</h2>
+                </div>
+            </div>
+
+            <div class="row text-center">
+                <div class="col-4">
+                    <h4>Needs</h4>
+                </div>
+                <div class="col-4">
+                    <h4>Savings</h4>
+                </div>
+                <div class="col-4">
+                    <h4>Wants</h4>
+                </div>
+            </div>
+      
+            <div class="row">
+                <div class="col-4">
+                    <div class="grid-container text-success">
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Housing</h5>
+                        </div>
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Transportation</h5>
+                        </div>
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Groceries</h5>
+                        </div>
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Utilities</h5>
+                        </div>
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Healthcare</h5>
+                        </div>
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Debt Payments</h5>
+                        </div>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="grid-container">
-                        <div class="grid-item-right border-gray"><!-- User input for income --></div>
-                        <div class="grid-item-right border-gray"><!-- User input for expenses --></div>
-                        <div class="grid-item-right border-gray"><!-- User input for home allotted amount --></div>
-                        <div class="grid-item-right border-gray"><!-- User input for auto allotted amount --></div>
-                        <div class="grid-item-right border-gray"><!-- User input for food allotted amount --></div>
-                        <div class="grid-item-right border-gray"><!-- User input for utilities allotted amount --></div>
-                        <div class="grid-item-right border-gray"><!-- User input for gas allotted amount --></div>
+
+                <div class="col-4">
+                    <div class="grid-container text-success">
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Emergency Fund</h5>
+                        </div>
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Retirement</h5>
+                        </div>
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Vacation</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="grid-container text-success">
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Entertainment</h5>
+                        </div>
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Dining Out</h5>
+                        </div>
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Hobbies</h5>
+                        </div>
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Other</h5>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+      
     
     
 {% endblock %}
