@@ -42,21 +42,30 @@
                     <div class="grid-container text-success">
                         <div class="grid-item bg-dark border-gray">
                             <h5>Housing</h5>
+                            <input type="text" name="housing">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Transportation</h5>
+                            <input type="text" name="transportation">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Groceries</h5>
+                            <input type="text" name="groceries">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Utilities</h5>
+                            <input type="text" name="utilities">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Healthcare</h5>
+                            <input type="text" name="healthcare">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Debt Payments</h5>
+                            <input type="text" name="debt_payments">
+                        </div>
+                        <div class="grid-item bg-dark">
+                            <button onclick="showExpensePopup('needs')">Add Expense</button>
                         </div>
                     </div>
                 </div>
@@ -65,12 +74,18 @@
                     <div class="grid-container text-success">
                         <div class="grid-item bg-dark border-gray">
                             <h5>Emergency Fund</h5>
+                            <input type="text" name="emergency_fund">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Retirement</h5>
+                            <input type="text" name="retirement">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Vacation</h5>
+                            <input type="text" name="vacation">
+                        </div>
+                        <div class="grid-item bg-dark">
+                            <button onclick="showExpensePopup('savings')">Add Expense</button>
                         </div>
                     </div>
                 </div>
@@ -79,21 +94,94 @@
                     <div class="grid-container text-success">
                         <div class="grid-item bg-dark border-gray">
                             <h5>Entertainment</h5>
+                            <input type="text" name="entertainment">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Dining Out</h5>
+                            <input type="text" name="dining_out">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Hobbies</h5>
+                            <input type="text" name="hobbies">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Other</h5>
+                            <input type="text" name="other">
+                        </div>
+                        <div class="grid-item bg-dark">
+                            <button onclick="showExpensePopup('wants')">Add Expense</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div id="expense-popup" class="expense-popup bg-dark text-success">
+        <div class="expense-popup-content">
+            <h4>Add Expense</h4>
+            <input type="text" id="expense-name-input" placeholder="Expense Name" required>
+            <input type="number" id="expense-value-input" placeholder="Expense Value">
+            <div class="expense-popup-actions">
+                <button onclick="saveExpense()">Save</button>
+                <button onclick="closePopup()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function showExpensePopup(category) {
+            var popup = document.getElementById("expense-popup");
+            popup.style.display = "block";
+
+            var expenseNameInput = document.getElementById("expense-name-input");
+            expenseNameInput.value = '';
+
+            var expenseValueInput = document.getElementById("expense-value-input");
+            expenseValueInput.value = '';
+
+            popup.setAttribute('data-category', category);
+        }
+
+        function saveExpense() {
+            var expenseNameInput = document.getElementById('expense-name-input');
+            var expenseValueInput = document.getElementById('expense-value-input');
+            var category = document.getElementById('expense-popup').getAttribute('data-category');
+            
+            var expenseSection = document.createElement('div');
+            expenseSection.classList.add('grid-item', 'bg-dark', 'border-gray');
+            
+            var expenseName = expenseNameInput.value;
+            var expenseValue = expenseValueInput.value;
+            
+            if (!expenseName) {
+                alert('Expense name is required.');
+                return;
+            }
+            
+            var expenseNameHeader = document.createElement('h5');
+            expenseNameHeader.textContent = expenseName;
+            expenseSection.appendChild(expenseNameHeader);
+            
+            var expenseValueInput = document.createElement('input');
+            expenseValueInput.type = 'text';
+            expenseValueInput.value = expenseValue;
+            expenseValueInput.name = category;
+            expenseSection.appendChild(expenseValueInput);
+            
+            var container = document.getElementsByClassName('grid-container')[0];
+            var addButton = container.getElementsByClassName('grid-item')[container.getElementsByClassName('grid-item').length - 1];
+            container.insertBefore(expenseSection, addButton);
+            
+            closePopup();
+        }
+
+        function closePopup() {
+            var popup = document.getElementById("expense-popup");
+            popup.style.display = "none";
+        }
+    </script>
       
     
     
