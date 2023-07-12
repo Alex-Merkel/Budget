@@ -104,10 +104,6 @@
                             <h5>Hobbies</h5>
                             <input type="text" name="hobbies">
                         </div>
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Other</h5>
-                            <input type="text" name="other">
-                        </div>
                         <div class="grid-item bg-dark">
                             <button onclick="showExpensePopup('wants')">Add Expense</button>
                         </div>
@@ -149,9 +145,6 @@
             var expenseValueInput = document.getElementById('expense-value-input');
             var category = document.getElementById('expense-popup').getAttribute('data-category');
 
-            var expenseSection = document.createElement('div');
-            expenseSection.classList.add('grid-item', 'bg-dark', 'border-gray');
-
             var expenseName = expenseNameInput.value;
             var expenseValue = expenseValueInput.value;
 
@@ -160,20 +153,46 @@
                 return;
             }
 
-            var expenseNameHeader = document.createElement('h5');
-            expenseNameHeader.textContent = expenseName;
-            expenseSection.appendChild(expenseNameHeader);
+            // Send the expense data to the API endpoint
+            var data = {
+                [expenseName]: parseFloat(expenseValue)
+            };
 
-            var expenseValueInput = document.createElement('input');
-            expenseValueInput.type = 'text';
-            expenseValueInput.value = expenseValue;
-            expenseValueInput.name = category;
-            expenseSection.appendChild(expenseValueInput);
+            fetch('/api/expenses', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Add the expense to the grid
+                    var expenseSection = document.createElement('div');
+                    expenseSection.classList.add('grid-item', 'bg-dark', 'border-gray');
 
-            var container = document.getElementById(category);
-            container.insertBefore(expenseSection, container.lastElementChild);
+                    var expenseNameHeader = document.createElement('h5');
+                    expenseNameHeader.textContent = expenseName;
+                    expenseSection.appendChild(expenseNameHeader);
 
-            closePopup();
+                    var expenseValueInput = document.createElement('input');
+                    expenseValueInput.type = 'text';
+                    expenseValueInput.value = expenseValue;
+                    expenseValueInput.name = category;
+                    expenseSection.appendChild(expenseValueInput);
+
+                    var container = document.getElementById(category);
+                    container.insertBefore(expenseSection, container.lastElementChild);
+
+                    closePopup();
+                } else {
+                    alert('Failed to add the expense. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
         }
 
 
