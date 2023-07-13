@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, current_app
-from ..api.routes import api
 import requests
 
 site = Blueprint('site', __name__, template_folder='site_templates')
