@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify
-from ..models import db, Expense
+from models import db, Expense
 
 api = Blueprint('api', __name__, url_prefix='/api')
 

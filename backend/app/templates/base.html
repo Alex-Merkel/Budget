@@ -31,6 +31,18 @@
                     <li class="nav-item">
                         <a href="{{ url_for('site.profile') }}" class="nav-link text-success">Profile</a>
                     </li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('auth.logout') }}" class="nav-link text-success">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('auth.signin') }}" class="nav-link text-success">Sign In</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('auth.signup') }}" class="nav-link text-success">Sign Up</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
