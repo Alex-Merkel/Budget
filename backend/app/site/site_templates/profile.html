@@ -5,7 +5,7 @@
         <div class="container p-5 bg-dark">
             <div class="row">
                 <div class="d-md-flex bg-dark align-items-center justify-content-evenly">
-                    <h1 class="col text-center">User's profile</h1>
+                    <h1 class="col text-center">{{ current_user.first_name }}'s user profile</h1>
                 </div>
             </div>
         </div>
@@ -16,9 +16,9 @@
             <div>
                 <h2 class="text-center text-light pt-5" id="profile_header">Here are your profile details:</h2>
                 <ul class="list-group py-5">
-                    <li class="list-group-item">First name:</li>
-                    <li class="list-group-item">Last name: </li> 
-                    <li class="list-group-item">Email:</li>
+                    <li class="list-group-item">First name: {{ current_user.first_name }}</li>
+                    <li class="list-group-item">Last name: {{ current_user.last_name }} </li> 
+                    <li class="list-group-item">Email: {{ current_user.email }}</li>
                 </ul>
             </div>
         </div>
