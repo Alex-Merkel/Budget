@@ -54,3 +54,26 @@ class Expense(db.Model):
     __tablename__ = 'expenses'
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     expense_list = db.Column(db.JSON, nullable=False)
+    income = db.Column(db.Integer, default=0, nullable=False)
+    user_token = db.Column(db.String, db.ForeignKey('user.token'), nullable=False)
+
+    def __init__(self, expense_list, income, user_token, user_id=''):
+        self.user_id = self.set_id()
+        self.expense_list = expense_list
+        self.income = income
+        self.user_token = user_token
+
+
+    def __repr__(self):
+        return 'The budget data has been added to the database.'
+    
+    def set_id(self):
+        return (secrets.token_urlsafe())
+    
+
+class ExpenseSchema(ma.Schema):
+    class Meta:
+        fields = ['user_id', 'expense_list', 'income']
+
+expense_schema = ExpenseSchema()
+    

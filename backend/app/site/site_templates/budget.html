@@ -152,12 +152,47 @@
 
             var surplusDeficitElement = document.getElementById('surplus_deficit');
             surplusDeficitElement.textContent = surplusDeficit.toFixed(2);
+
+            // Send the updated expense data to the backend API
+            var data = {
+                expenses: {
+                    housing: parseFloat(document.querySelector('input[name="housing"]').value),
+                    transportation: parseFloat(document.querySelector('input[name="transportation"]').value),
+                    groceries: parseFloat(document.querySelector('input[name="groceries"]').value),
+                    utilities: parseFloat(document.querySelector('input[name="utilities"]').value),
+                    healthcare: parseFloat(document.querySelector('input[name="healthcare"]').value),
+                    debt_payments: parseFloat(document.querySelector('input[name="debt_payments"]').value),
+                    emergency_fund: parseFloat(document.querySelector('input[name="emergency_fund"]').value),
+                    retirement: parseFloat(document.querySelector('input[name="retirement"]').value),
+                    vacation: parseFloat(document.querySelector('input[name="vacation"]').value),
+                    entertainment: parseFloat(document.querySelector('input[name="entertainment"]').value),
+                    dining_out: parseFloat(document.querySelector('input[name="dining_out"]').value),
+                    hobbies: parseFloat(document.querySelector('input[name="hobbies"]').value),
+                }
+            };
+
+            fetch('/api/expenses', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    alert('Failed to save the data. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
         }
 
         var totalIncomeInput = document.getElementById('total_income_input');
         totalIncomeInput.addEventListener('input', updateTotals);
 
-        // Call updateTotals initially to set the initial values
+        // Call updateTotals initially to set the initial values and save data in the database
         updateTotals();
         
         
