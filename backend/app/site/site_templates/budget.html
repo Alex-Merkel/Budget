@@ -130,6 +130,10 @@
 
     
     <script>
+        localStorage.setItem('token', token)
+        console.log(token)
+        const token = localStorage.getItem('token')
+
         function updateTotals() {
             // Get the total income entered by the user
             var totalIncomeInput = document.getElementById('total_income_input');
@@ -174,7 +178,8 @@
             fetch('/api/expenses', {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'x-access-token': 'Bearer ' + token
                 },
                 body: JSON.stringify(data)
             })
@@ -230,7 +235,8 @@
             fetch('/api/expenses', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'x-access-token': 'Bearer ' + token
                 },
                 body: JSON.stringify(data)
             })

@@ -34,10 +34,18 @@ def get_expenses(current_user_token):
     else:
         return jsonify({'message': 'Expense list not found'}), 404
 
-@api.route('/expenses', methods=['PUT'])
+@api.route('/expenses', methods=['GET', 'PUT'])
 @token_required
-def update_expenses():
+def update_expenses(current_user_token):
+    if not current_user_token:
+        return jsonify({"message": "Token is missing or invalid."}), 401
+
+    user_id = current_user_token.user_id
+
     expense = Expense.query.get(user_id)
+
+    if not expense:
+        return jsonify({"message": "Expense list not found."}), 404
 
     expense.expense_list = request.json['expense_list']
     expense.income = request.json['income']
@@ -49,8 +57,8 @@ def update_expenses():
 
 
 @api.route('/expenses', methods=['DELETE'])
-def delete_expenses():
-    expense = Expense.query.get(user_id)
+def delete_expenses(current_user_token):
+    expense = Expense.query.get(id)
     if expense:
         db.session.delete(expense)
         db.session.commit()

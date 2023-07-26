@@ -55,7 +55,7 @@ class Expense(db.Model):
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     expense_list = db.Column(db.JSON, nullable=False)
     income = db.Column(db.Integer, default=0, nullable=False)
-    user_token = db.Column(db.String, db.ForeignKey('user.token'), nullable=False)
+    user_token = db.Column(db.String, db.ForeignKey('users.token'), nullable=False)
 
     def __init__(self, expense_list, income, user_token, user_id=''):
         self.user_id = self.set_id()
