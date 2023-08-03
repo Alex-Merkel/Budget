@@ -104,7 +104,7 @@
                             <input type="text" value="0" name="dining_out">
                         </div>
                         <div class="grid-item bg-dark border-gray">
-                            <h5>Hobbies</h5>
+                            <h5>{{ current_user.token }}</h5>
                             <input type="text" value="0" name="hobbies">
                         </div>
                         <div class="grid-item bg-dark">
@@ -130,9 +130,9 @@
 
     
     <script>
-        localStorage.setItem('token', token)
+        const token = "{{ current_user.token }}"
+
         console.log(token)
-        const token = localStorage.getItem('token')
 
         function updateTotals() {
             // Get the total income entered by the user
@@ -194,6 +194,31 @@
             });
         }
 
+        function updateBudgetPage(data) {
+            // Assuming you have elements with corresponding IDs in the HTML.
+            document.getElementById('total_income_input').value = data.income;
+            document.getElementById('total_expenses').textContent = calculateTotalExpenses(data).toString();
+            document.getElementById('surplus_deficit').textContent = (data.income - calculateTotalExpenses(data)).toString();
+
+        // Update expense input values for each category.
+            for (const category in data) {
+                if (category !== 'income') {
+                document.querySelector(`input[name="${category}"]`).value = data[category];
+                }
+            }
+        }
+
+        function calculateTotalExpenses(data) {
+            let totalExpenses = 0;
+            for (const category in data) {
+                if (category !== 'income') {
+                totalExpenses += data[category];
+                }
+            }
+            return totalExpenses;
+        }
+
+
         var totalIncomeInput = document.getElementById('total_income_input');
         totalIncomeInput.addEventListener('input', updateTotals);
 
@@ -215,6 +240,7 @@
         }
 
         function saveExpense() {
+            
             var expenseNameInput = document.getElementById('expense-name-input');
             var expenseValueInput = document.getElementById('expense-value-input');
             var category = document.getElementById('expense-popup').getAttribute('data-category');

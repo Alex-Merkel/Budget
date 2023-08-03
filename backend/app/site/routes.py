@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, session, redirect, url_for, current_app, jsonify
+from models import db, User, Expense
 import requests
 
 site = Blueprint('site', __name__, template_folder='site_templates')
@@ -27,8 +28,14 @@ def budget():
         dining_out_expense = request.form.get('dining_out')
         hobbies_expense = request.form.get('hobbies')
 
+        token = session.get('token')
+        expense = Expense.query.filter_by(user_token=token).first()
 
-        expense_data = {
+    # if not expense:
+    #     # expense = Expense(token=token)
+    #     db.session.add(expense)
+        
+        expense.expense_list = {
             'housing': housing_expense,
             'transportation': transportation_expense,
             'groceries': groceries_expense,
@@ -42,9 +49,10 @@ def budget():
             'dining_out': dining_out_expense,
             'hobbies': hobbies_expense
         }
-        
+        db.session.commit()
+
         api_url = f"{current_app.config['DATABASE_URI']}/api/expenses"
-        response = requests.post(api_url, json=expense_data)
+        response = requests.post(api_url, headers={'Content-Type': 'application/json'}, json={'expenses' : expense.expense_list})
 
         if response.status_code == 200:
             return redirect(url_for('site.budget'))

@@ -4,15 +4,25 @@ from models import db, Expense, expense_schema
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
-@api.route('/expenses', methods=['POST'])
+@api.route('/expenses', methods=['GET', 'POST'])
 @token_required
-def create_expenses(current_user_token):
+def get_or_create_expenses(current_user_token):
     data = request.get_json()
     expense_list = data.get('expenses') or {}
     income = data.get('totalIncome') or 0
     user_token = current_user_token.token
 
-    expense = Expense(expense_list, income, user_token=user_token)
+    print(f'Watermelon: {current_user_token.token} ')
+
+    expense = Expense.query.filter_by(token=user_token).first()
+
+    if expense:
+        expense.expense_list = expense_list
+        expense.income = income
+
+    else:
+        expense = Expense(expense_list, income, user_token=user_token)
+
 
     db.session.add(expense)
     db.session.commit()
@@ -21,18 +31,6 @@ def create_expenses(current_user_token):
     response = expense_schema.dump(expense)
 
     return jsonify(expense_list), 201
-
-@api.route('/expenses', methods=['GET'])
-@token_required
-def get_expenses(current_user_token):
-    a_user = current_user_token.token
-    # Add .all() at end of below line?
-    expense = Expense.query.filter_by(user_token = a_user)
-    if expense:
-        expense_list = expense.expense_list
-        return jsonify(expense_list), 200
-    else:
-        return jsonify({'message': 'Expense list not found'}), 404
 
 @api.route('/expenses', methods=['GET', 'PUT'])
 @token_required
