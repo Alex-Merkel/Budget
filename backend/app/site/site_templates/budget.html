@@ -134,6 +134,31 @@
 
         console.log(token)
 
+        function checkForData() {
+            fetch('/api/expenses', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': 'Bearer ' + token
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    alert('Failed to save the data. Please try again.');
+                } else {
+                    // Parse the JSON response and update the budget page
+                    response.json().then(data => updateBudgetPage(data));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+
+        checkForData()
+
         function updateTotals() {
             // Get the total income entered by the user
             var totalIncomeInput = document.getElementById('total_income_input');

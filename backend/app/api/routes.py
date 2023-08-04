@@ -8,7 +8,20 @@ api = Blueprint('api', __name__, url_prefix='/api')
 @token_required
 def get_or_create_expenses(current_user_token):
     data = request.get_json()
-    expense_list = data.get('expenses') or {}
+    expense_list = data.get('expenses') or {
+        'housing': 0,
+        'transportation': 0,
+        'groceries': 0,
+        'utilities': 0,
+        'healthcare': 0,
+        'debt_payments': 0,
+        'emergency_fund': 0,
+        'retirement': 0,
+        'vacation': 0,
+        'entertainment': 0,
+        'dining_out': 0,
+        'hobbies': 0
+    }
     income = data.get('totalIncome') or 0
     user_token = current_user_token.token
 
@@ -16,21 +29,26 @@ def get_or_create_expenses(current_user_token):
 
     expense = Expense.query.filter_by(token=user_token).first()
 
-    if expense:
-        expense.expense_list = expense_list
-        expense.income = income
+    if not expense:
+        # If no entry is found, create a new row with default values
+        expense = Expense(expense_list=expense_list, income=income, token=user_token)
+        db.session.add(expense)
+        db.session.commit()
 
     else:
-        expense = Expense(expense_list, income, user_token=user_token)
+        # If an entry is found, update the expense_list and income
+        expense.expense_list = expense_list
+        expense.income = income
+        db.session.commit()
 
+    # Response to return, you can modify this according to your needs
+    response = {
+        "message": "Expense data saved successfully.",
+        "expense_list": expense.expense_list,
+        "income": expense.income
+    }
 
-    db.session.add(expense)
-    db.session.commit()
-
-    # Need this line below?
-    response = expense_schema.dump(expense)
-
-    return jsonify(expense_list), 201
+    return jsonify(response), 201
 
 @api.route('/expenses', methods=['GET', 'PUT'])
 @token_required
