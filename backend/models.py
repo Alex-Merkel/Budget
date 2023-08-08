@@ -45,7 +45,7 @@ class User(db.Model, UserMixin):
         return self.pw_hash
     
     def __repr__(self):
-        return f'User {self.email} has been added to the database'
+        return self.token
     
 
 

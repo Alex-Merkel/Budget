@@ -16,15 +16,15 @@
             <div class="row text-center" id="budget_header">
                 <div class="col-4">
                     <h2>Total Income:</h2>
-                    <input type="text" value="0" name="total_income" id="total_income_input">
+                    <input type="text" value="0" name="total_income" id="income">
                 </div>
                 <div class="col-4">
                     <h2>Total Expenses:</h2>
-                    <p id="total_expenses">0</p>
+                    <p id="total_expenses" id="total_expenses">0</p>
                 </div>
                 <div class="col-4">
                     <h2>Surplus/Deficit:</h2>
-                    <p id="surplus_deficit">0</p>
+                    <p id="surplus_deficit" id="surplus_deficit">0</p>
                 </div>
             </div>
 
@@ -140,7 +140,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                     'x-access-token': 'Bearer ' + token
-                }
+                },
             })
             .then(response => {
                 if (!response.ok) {
@@ -166,7 +166,7 @@
 
         function createDefaultData() {
             const defaultData = {
-                expenses: {
+                expense_list: {
                     housing: 0,
                     transportation: 0,
                     groceries: 0,
@@ -211,76 +211,84 @@
 
         checkForData()
 
-        function updateTotals() {
-            // Get the total income entered by the user
-            var totalIncomeInput = document.getElementById('total_income_input');
-            var totalIncome = parseFloat(totalIncomeInput.value);
+        // function updateTotals() {
+        //     // Get the total income entered by the user
+        //     var totalIncomeInput = document.getElementById('total_income_input');
+        //     var totalIncome = parseFloat(totalIncomeInput.value);
 
-            // Calculate the total expenses
-            var totalExpenses = 0;
-            var expenseInputs = document.querySelectorAll('input[name^="housing"], input[name^="transportation"], input[name^="groceries"], input[name^="utilities"], input[name^="healthcare"], input[name^="debt_payments"], input[name^="emergency_fund"], input[name^="retirement"], input[name^="vacation"], input[name^="entertainment"], input[name^="dining_out"], input[name^="hobbies"]');
-            for (var i = 0; i < expenseInputs.length; i++) {
-                var expenseValue = parseFloat(expenseInputs[i].value);
-                totalExpenses += isNaN(expenseValue) ? 0 : expenseValue;
-            }
+        //     // Calculate the total expenses
+        //     var totalExpenses = 0;
+        //     var expenseInputs = document.querySelectorAll('input[name^="housing"], input[name^="transportation"], input[name^="groceries"], input[name^="utilities"], input[name^="healthcare"], input[name^="debt_payments"], input[name^="emergency_fund"], input[name^="retirement"], input[name^="vacation"], input[name^="entertainment"], input[name^="dining_out"], input[name^="hobbies"]');
+        //     for (var i = 0; i < expenseInputs.length; i++) {
+        //         var expenseValue = parseFloat(expenseInputs[i].value);
+        //         totalExpenses += isNaN(expenseValue) ? 0 : expenseValue;
+        //     }
 
-            // Calculate the surplus/deficit
-            var surplusDeficit = totalIncome - totalExpenses;
+        //     // Calculate the surplus/deficit
+        //     var surplusDeficit = totalIncome - totalExpenses;
 
-            // Update the total expenses and surplus/deficit elements
-            var totalExpensesElement = document.getElementById('total_expenses');
-            totalExpensesElement.textContent = totalExpenses.toFixed(2);
+        //     // Update the total expenses and surplus/deficit elements
+        //     var totalExpensesElement = document.getElementById('total_expenses');
+        //     totalExpensesElement.textContent = totalExpenses.toFixed(2);
 
-            var surplusDeficitElement = document.getElementById('surplus_deficit');
-            surplusDeficitElement.textContent = surplusDeficit.toFixed(2);
+        //     var surplusDeficitElement = document.getElementById('surplus_deficit');
+        //     surplusDeficitElement.textContent = surplusDeficit.toFixed(2);
 
-            // Send the updated expense data to the backend API
-            var data = {
-                expenses: {
-                    housing: parseFloat(document.querySelector('input[name="housing"]').value),
-                    transportation: parseFloat(document.querySelector('input[name="transportation"]').value),
-                    groceries: parseFloat(document.querySelector('input[name="groceries"]').value),
-                    utilities: parseFloat(document.querySelector('input[name="utilities"]').value),
-                    healthcare: parseFloat(document.querySelector('input[name="healthcare"]').value),
-                    debt_payments: parseFloat(document.querySelector('input[name="debt_payments"]').value),
-                    emergency_fund: parseFloat(document.querySelector('input[name="emergency_fund"]').value),
-                    retirement: parseFloat(document.querySelector('input[name="retirement"]').value),
-                    vacation: parseFloat(document.querySelector('input[name="vacation"]').value),
-                    entertainment: parseFloat(document.querySelector('input[name="entertainment"]').value),
-                    dining_out: parseFloat(document.querySelector('input[name="dining_out"]').value),
-                    hobbies: parseFloat(document.querySelector('input[name="hobbies"]').value),
-                }
-            };
+        //     // Send the updated expense data to the backend API
+        //     var data = {
+        //         expenses: {
+        //             housing: parseFloat(document.querySelector('input[name="housing"]').value),
+        //             transportation: parseFloat(document.querySelector('input[name="transportation"]').value),
+        //             groceries: parseFloat(document.querySelector('input[name="groceries"]').value),
+        //             utilities: parseFloat(document.querySelector('input[name="utilities"]').value),
+        //             healthcare: parseFloat(document.querySelector('input[name="healthcare"]').value),
+        //             debt_payments: parseFloat(document.querySelector('input[name="debt_payments"]').value),
+        //             emergency_fund: parseFloat(document.querySelector('input[name="emergency_fund"]').value),
+        //             retirement: parseFloat(document.querySelector('input[name="retirement"]').value),
+        //             vacation: parseFloat(document.querySelector('input[name="vacation"]').value),
+        //             entertainment: parseFloat(document.querySelector('input[name="entertainment"]').value),
+        //             dining_out: parseFloat(document.querySelector('input[name="dining_out"]').value),
+        //             hobbies: parseFloat(document.querySelector('input[name="hobbies"]').value),
+        //         }
+        //     };
 
-            fetch('/api/expenses', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-access-token': 'Bearer ' + token
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    alert('Failed to save the data. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-            });
-        }
+        //     fetch('/api/expenses', {
+        //         method: 'PUT',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'x-access-token': 'Bearer ' + token
+        //         },
+        //         body: JSON.stringify(data)
+        //     })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             alert('Failed to save the data. Please try again.');
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //         alert('An error occurred. Please try again.');
+        //     });
+        // }
 
         function updateBudgetPage(data) {
-            // Assuming you have elements with corresponding IDs in the HTML.
-            document.getElementById('total_income_input').value = data.income;
-            document.getElementById('total_expenses').textContent = calculateTotalExpenses(data).toString();
-            document.getElementById('surplus_deficit').textContent = (data.income - calculateTotalExpenses(data)).toString();
+            document.getElementById('income').value = data.income;
+            
+            const totalExpenses = calculateTotalExpenses(data);
+            document.getElementById('total_expenses').textContent = totalExpenses.toString();
+            
+            // Calculate surplus/deficit and set the value for the corresponding element
+            const surplusDeficit = data.income - totalExpenses;
+            document.getElementById('surplus_deficit').textContent = surplusDeficit.toString();
 
         // Update expense input values for each category.
-            for (const category in data) {
-                if (category !== 'income') {
-                document.querySelector(`input[name="${category}"]`).value = data[category];
+            for (const category in data.expenses) {
+                if (data.expenses.hasOwnProperty(category)) {
+                    const expenseValue = data.expenses[category];
+                    const expenseInput = document.querySelector(`input[name="${category}"]`);
+                    if (expenseInput) {
+                        expenseInput.value = expenseValue;
+                    }
                 }
             }
         }
@@ -297,81 +305,81 @@
 
 
         var totalIncomeInput = document.getElementById('total_income_input');
-        totalIncomeInput.addEventListener('input', updateTotals);
+        // totalIncomeInput.addEventListener('input', updateTotals);
 
         // Call updateTotals initially to set the initial values and save data in the database
-        updateTotals();
+        // updateTotals();
         
         
-        function showExpensePopup(category) {
-            var popup = document.getElementById("expense-popup");
-            popup.style.display = "block";
+        // function showExpensePopup(category) {
+        //     var popup = document.getElementById("expense-popup");
+        //     popup.style.display = "block";
 
-            var expenseNameInput = document.getElementById("expense-name-input");
-            expenseNameInput.value = '';
+        //     var expenseNameInput = document.getElementById("expense-name-input");
+        //     expenseNameInput.value = '';
 
-            var expenseValueInput = document.getElementById("expense-value-input");
-            expenseValueInput.value = '';
+        //     var expenseValueInput = document.getElementById("expense-value-input");
+        //     expenseValueInput.value = '';
 
-            popup.setAttribute('data-category', category);
-        }
+        //     popup.setAttribute('data-category', category);
+        // }
 
-        function saveExpense() {
+        // function saveExpense() {
             
-            var expenseNameInput = document.getElementById('expense-name-input');
-            var expenseValueInput = document.getElementById('expense-value-input');
-            var category = document.getElementById('expense-popup').getAttribute('data-category');
+        //     var expenseNameInput = document.getElementById('expense-name-input');
+        //     var expenseValueInput = document.getElementById('expense-value-input');
+        //     var category = document.getElementById('expense-popup').getAttribute('data-category');
 
-            var expenseName = expenseNameInput.value;
-            var expenseValue = expenseValueInput.value;
+        //     var expenseName = expenseNameInput.value;
+        //     var expenseValue = expenseValueInput.value;
 
-            if (!expenseName) {
-                alert('Expense name is required.');
-                return;
-            }
+        //     if (!expenseName) {
+        //         alert('Expense name is required.');
+        //         return;
+        //     }
 
-            // Send the expense data to the API endpoint
-            var data = {
-                [expenseName]: parseFloat(expenseValue)
-            };
+        //     // Send the expense data to the API endpoint
+        //     var data = {
+        //         [expenseName]: parseFloat(expenseValue)
+        //     };
 
-            fetch('/api/expenses', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-access-token': 'Bearer ' + token
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Add the expense to the grid
-                    var expenseSection = document.createElement('div');
-                    expenseSection.classList.add('grid-item', 'bg-dark', 'border-gray');
+        //     fetch('/api/expenses', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'x-access-token': 'Bearer ' + token
+        //         },
+        //         body: JSON.stringify(data)
+        //     })
+        //     .then(response => {
+        //         if (response.ok) {
+        //             // Add the expense to the grid
+        //             var expenseSection = document.createElement('div');
+        //             expenseSection.classList.add('grid-item', 'bg-dark', 'border-gray');
 
-                    var expenseNameHeader = document.createElement('h5');
-                    expenseNameHeader.textContent = expenseName;
-                    expenseSection.appendChild(expenseNameHeader);
+        //             var expenseNameHeader = document.createElement('h5');
+        //             expenseNameHeader.textContent = expenseName;
+        //             expenseSection.appendChild(expenseNameHeader);
 
-                    var expenseValueInput = document.createElement('input');
-                    expenseValueInput.type = 'text';
-                    expenseValueInput.value = expenseValue;
-                    expenseValueInput.name = category;
-                    expenseSection.appendChild(expenseValueInput);
+        //             var expenseValueInput = document.createElement('input');
+        //             expenseValueInput.type = 'text';
+        //             expenseValueInput.value = expenseValue;
+        //             expenseValueInput.name = category;
+        //             expenseSection.appendChild(expenseValueInput);
 
-                    var container = document.getElementById(category);
-                    container.insertBefore(expenseSection, container.lastElementChild);
+        //             var container = document.getElementById(category);
+        //             container.insertBefore(expenseSection, container.lastElementChild);
 
-                    closePopup();
-                } else {
-                    alert('Failed to add the expense. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-            });
-        }
+        //             closePopup();
+        //         } else {
+        //             alert('Failed to add the expense. Please try again.');
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //         alert('An error occurred. Please try again.');
+        //     });
+        // }
 
 
         function closePopup() {

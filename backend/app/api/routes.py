@@ -7,8 +7,13 @@ api = Blueprint('api', __name__, url_prefix='/api')
 @api.route('/expenses', methods=['GET', 'POST'])
 @token_required
 def get_or_create_expenses(current_user_token):
+    print('Helo')
+    print(current_user_token)
+    print(request.data)
+    print(request.headers)
     data = request.get_json()
-    expense_list = data.get('expenses') or {
+    print('Hello')
+    expense_list = data.get('expense_list') or {
         'housing': 0,
         'transportation': 0,
         'groceries': 0,
@@ -22,16 +27,17 @@ def get_or_create_expenses(current_user_token):
         'dining_out': 0,
         'hobbies': 0
     }
-    income = data.get('totalIncome') or 0
+    income = data.get('income') or 0
     user_token = current_user_token.token
 
     print(f'Watermelon: {current_user_token.token} ')
 
-    expense = Expense.query.filter_by(token=user_token).first()
+    expense = Expense.query.filter_by(user_token=user_token).first()
+    print(expense)
 
     if not expense:
         # If no entry is found, create a new row with default values
-        expense = Expense(expense_list=expense_list, income=income, token=user_token)
+        expense = Expense(expense_list=expense_list, income=income, user_token=user_token)
         db.session.add(expense)
         db.session.commit()
 
