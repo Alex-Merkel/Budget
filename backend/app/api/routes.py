@@ -1,19 +1,43 @@
 from flask import Blueprint, render_template, request, jsonify
 from helpers import token_required
 from models import db, Expense, expense_schema
+import uuid
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
-@api.route('/expenses', methods=['GET', 'POST'])
+@api.route('/checkexpenses', methods=['GET', 'POST'])
 @token_required
-def get_or_create_expenses(current_user_token):
+def get_expenses(current_user_token):
     print('Helo')
     print(current_user_token)
     print(request.data)
     print(request.headers)
-    data = request.get_json()
-    print('Hello')
-    expense_list = data.get('expense_list') or {
+    token = request.json['user_token']
+    expense = Expense.query.filter_by(user_token=token).first()
+
+    if expense:
+        response = {
+            "message": "Expense data saved successfully.",
+            "expense_list": expense.expense_list,
+            "income": expense.income
+        }
+    else:
+        response = "User and/or data not found"
+
+    return jsonify(response), 201
+
+
+@api.route('/createexpenses', methods=['GET', 'POST'])
+@token_required
+def create_expenses(current_user_token):
+    print('Helo')
+    print(current_user_token)
+    print(request.data)
+    print(request.headers)
+    expense = request.json
+
+    user_id = str(uuid.uuid4())
+    expense_list = {
         'housing': 0,
         'transportation': 0,
         'groceries': 0,
@@ -27,36 +51,28 @@ def get_or_create_expenses(current_user_token):
         'dining_out': 0,
         'hobbies': 0
     }
-    income = data.get('income') or 0
-    user_token = current_user_token.token
+    income = 0
+    user_token = current_user_token
 
-    print(f'Watermelon: {current_user_token.token} ')
-
-    expense = Expense.query.filter_by(user_token=user_token).first()
-    print(expense)
-
-    if not expense:
-        # If no entry is found, create a new row with default values
-        expense = Expense(expense_list=expense_list, income=income, user_token=user_token)
+    if expense is None:
+        expense = Expense(
+            user_id = user_id,
+            expense_list = expense_list,
+            income = income,
+            user_token = user_token,
+            response = "Data has been created"
+        )
         db.session.add(expense)
-        db.session.commit()
-
     else:
-        # If an entry is found, update the expense_list and income
-        expense.expense_list = expense_list
-        expense.income = income
-        db.session.commit()
+        response = "Data not created, please try again"
 
-    # Response to return, you can modify this according to your needs
-    response = {
-        "message": "Expense data saved successfully.",
-        "expense_list": expense.expense_list,
-        "income": expense.income
-    }
+    db.session.commit()
+
 
     return jsonify(response), 201
 
-@api.route('/expenses', methods=['GET', 'PUT'])
+
+@api.route('/updateexpenses', methods=['GET', 'PUT'])
 @token_required
 def update_expenses(current_user_token):
     if not current_user_token:
@@ -78,7 +94,7 @@ def update_expenses(current_user_token):
     return jsonify(response)
 
 
-@api.route('/expenses', methods=['DELETE'])
+@api.route('/deleteexpenses', methods=['DELETE'])
 def delete_expenses(current_user_token):
     expense = Expense.query.get(id)
     if expense:
