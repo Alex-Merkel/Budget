@@ -8,11 +8,8 @@ api = Blueprint('api', __name__, url_prefix='/api')
 @api.route('/checkexpenses', methods=['GET', 'POST'])
 @token_required
 def get_expenses(current_user_token):
-    print('Helo')
-    print(current_user_token)
-    print(request.data)
-    print(request.headers)
-    token = request.json['user_token']
+    token = request.headers.get('x-access-token')
+    print(token)
     expense = Expense.query.filter_by(user_token=token).first()
 
     if expense:
@@ -24,19 +21,20 @@ def get_expenses(current_user_token):
     else:
         response = "User and/or data not found"
 
-    return jsonify(response), 201
+    return jsonify(response), 200
 
 
 @api.route('/createexpenses', methods=['GET', 'POST'])
 @token_required
 def create_expenses(current_user_token):
-    print('Helo')
-    print(current_user_token)
-    print(request.data)
-    print(request.headers)
-    expense = request.json
+    # print('Helo')
+    # print(current_user_token)
+    # print(request.data)
+    # print(request.headers)
+    # expense = request.json
+    # print(expense)
 
-    user_id = str(uuid.uuid4())
+    
     expense_list = {
         'housing': 0,
         'transportation': 0,
@@ -54,19 +52,21 @@ def create_expenses(current_user_token):
     income = 0
     user_token = current_user_token
 
-    if expense is None:
-        expense = Expense(
-            user_id = user_id,
-            expense_list = expense_list,
-            income = income,
-            user_token = user_token,
-            response = "Data has been created"
-        )
-        db.session.add(expense)
-    else:
-        response = "Data not created, please try again"
+    expense = Expense(
+        user_id = str(uuid.uuid4()),
+        expense_list = expense_list,
+        income = income,
+        user_token = user_token
+    )
+    
+    # print(expense)
 
+    db.session.add(expense)
     db.session.commit()
+
+    response = "Data not created, please try again"
+
+    
 
 
     return jsonify(response), 201

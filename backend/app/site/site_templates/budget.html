@@ -147,14 +147,20 @@
                     alert('Failed to get the data. Please try again.');
                 } else {
                     // Parse the JSON response and update the budget page
-                    response.json().then(data => {
-                        if (Object.keys(data).length === 0) {
+                    response.json()
+                    .then(data => {
+                        console.log(data);
+                        if (typeof data === 'string' && data === "User and/or data not found") {
                             // No data found, create default data and update the budget page
-                            console.log('no data found')
+                            console.log('no data found');
                             createDefaultData();
                         } else {
                             updateBudgetPage(data);
                         }
+                    })
+                    .catch(error => {
+                        console.error('Error parsing JSON:', error);
+                        alert('An error occurred while parsing JSON. Please try again.');
                     });
                 }
             })
@@ -164,41 +170,25 @@
             });
         }
 
+
+
         function createDefaultData() {
-            const defaultData = {
-                expense_list: {
-                    housing: 0,
-                    transportation: 0,
-                    groceries: 0,
-                    utilities: 0,
-                    healthcare: 0,
-                    debt_payments: 0,
-                    emergency_fund: 0,
-                    retirement: 0,
-                    vacation: 0,
-                    entertainment: 0,
-                    dining_out: 0,
-                    hobbies: 0
-                },
 
-                income: 0,
-
-                user_token : current_user.token
     
-            };
+            
 
-            fetch('/api/expenses', {
+            fetch('/api/createexpenses', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'x-access-token': 'Bearer ' + token
                 },
-                body: JSON.stringify(defaultData)
+                body: JSON.stringify()
             })
             .then(response => {
                 if (response.ok) {
                     // Update the budget page with the default data
-                    updateBudgetPage(defaultData);
+                    updateBudgetPage();
                 } else {
                     alert('Failed to create default data. Please try again.');
                 }
