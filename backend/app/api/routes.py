@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from helpers import token_required
 from models import db, Expense, expense_schema
-import uuid
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -27,13 +26,6 @@ def get_expenses(current_user_token):
 @api.route('/createexpenses', methods=['GET', 'POST'])
 @token_required
 def create_expenses(current_user_token):
-    # print('Helo')
-    # print(current_user_token)
-    # print(request.data)
-    # print(request.headers)
-    # expense = request.json
-    # print(expense)
-
     
     expense_list = {
         'housing': 0,
@@ -50,23 +42,18 @@ def create_expenses(current_user_token):
         'hobbies': 0
     }
     income = 0
-    user_token = current_user_token
+    user_token = current_user_token.token
 
     expense = Expense(
-        user_id = str(uuid.uuid4()),
         expense_list = expense_list,
         income = income,
         user_token = user_token
     )
     
-    # print(expense)
-
     db.session.add(expense)
     db.session.commit()
 
     response = "Data not created, please try again"
-
-    
 
 
     return jsonify(response), 201

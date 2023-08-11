@@ -52,7 +52,7 @@ class User(db.Model, UserMixin):
 
 class Expense(db.Model):
     __tablename__ = 'expenses'
-    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.String, primary_key=True)
     expense_list = db.Column(db.JSON, nullable=False)
     income = db.Column(db.Integer, default=0, nullable=False)
     user_token = db.Column(db.String, db.ForeignKey('users.token'), nullable=False)
