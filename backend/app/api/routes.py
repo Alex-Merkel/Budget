@@ -7,9 +7,7 @@ api = Blueprint('api', __name__, url_prefix='/api')
 @api.route('/checkexpenses', methods=['GET', 'POST'])
 @token_required
 def get_expenses(current_user_token):
-    token = request.headers.get('x-access-token')
-    print(token)
-    expense = Expense.query.filter_by(user_token=token).first()
+    expense = Expense.query.filter_by(user_token=current_user_token.token).first()
 
     if expense:
         response = {
