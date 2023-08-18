@@ -55,12 +55,16 @@ class Expense(db.Model):
     user_id = db.Column(db.String, primary_key=True)
     expense_list = db.Column(db.JSON, nullable=False)
     income = db.Column(db.Integer, default=0, nullable=False)
+    total_expenses = db.Column(db.Integer, default=0, nullable=False)
+    surplus_deficit = db.Column(db.Integer, default=0, nullable=False)
     user_token = db.Column(db.String, db.ForeignKey('users.token'), nullable=False)
 
-    def __init__(self, expense_list, income, user_token, user_id=''):
+    def __init__(self, expense_list, income, total_expenses, surplus_deficit, user_token, user_id=''):
         self.user_id = self.set_id()
         self.expense_list = expense_list
         self.income = income
+        self.total_expenses = total_expenses
+        self.surplus_deficit = surplus_deficit
         self.user_token = user_token
 
 
@@ -73,7 +77,7 @@ class Expense(db.Model):
 
 class ExpenseSchema(ma.Schema):
     class Meta:
-        fields = ['user_id', 'expense_list', 'income']
+        fields = ['user_id', 'expense_list', 'income', 'total_expenses', 'surplus_deficit']
 
 expense_schema = ExpenseSchema()
     

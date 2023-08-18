@@ -13,7 +13,9 @@ def get_expenses(current_user_token):
         response = {
             "message": "Expense data saved successfully.",
             "expense_list": expense.expense_list,
-            "income": expense.income
+            "income": expense.income,
+            "total_expenses": expense.total_expenses,
+            "surplus_deficit": expense.surplus_deficit
         }
     else:
         response = "User and/or data not found"
@@ -40,11 +42,15 @@ def create_expenses(current_user_token):
         'hobbies': 0
     }
     income = 0
+    total_expenses = 0
+    surplus_deficit = 0
     user_token = current_user_token.token
 
     expense = Expense(
         expense_list = expense_list,
         income = income,
+        total_expenses = total_expenses,
+        surplus_deficit = surplus_deficit,
         user_token = user_token
     )
     
