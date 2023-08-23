@@ -69,15 +69,17 @@ def update_expenses(current_user_token):
     if not current_user_token:
         return jsonify({"message": "Token is missing or invalid."}), 401
 
-    user_id = current_user_token.user_id
+    user_token = current_user_token.token
 
-    expense = Expense.query.get(user_id)
+    expense = Expense.query.filter_by(user_token=user_token).first()
 
     if not expense:
         return jsonify({"message": "Expense list not found."}), 404
 
     expense.expense_list = request.json['expense_list']
     expense.income = request.json['income']
+    expense.total_expenses = request.json['total_expenses']
+    expense.surplus_deficit = request.json['surplus_deficit']
     expense.user_token = current_user_token.token
 
     db.session.commit()
