@@ -213,7 +213,7 @@
         checkForData()
 
 
-        function calculateTotalExpenses(data) {
+        function calculateTotalExpenses(currentData) {
             let totalExpenses = 0;
             for (const category in data.expense_list) {
                 if (data.expense_list.hasOwnProperty(category)) {
@@ -223,20 +223,20 @@
             return totalExpenses;
         }
 
-        function updateBudgetPage(data) {
-            document.getElementById('income').value = data.income;
+        function updateBudgetPage(currentData) {
+            document.getElementById('income').value = currentData.income;
             
-            const totalExpenses = calculateTotalExpenses(data);
-            document.getElementById('total_expenses').value = data.total_expenses
+            const totalExpenses = calculateTotalExpenses(currentData);
+            document.getElementById('total_expenses').value = currentData.total_expenses
             
             // Calculate surplus/deficit and set the value for the corresponding element
-            const surplusDeficit = data.income - totalExpenses;
-            document.getElementById('surplus_deficit').value = data.surplus_deficit;
+            const surplusDeficit = currentData.income - totalExpenses;
+            document.getElementById('surplus_deficit').value = currentData.surplus_deficit;
 
         // Update expense input values for each category.
             for (const category in data.expense_list) {
-                if (data.expense_list.hasOwnProperty(category)) {
-                    const expenseValue = data.expense_list[category];
+                if (currentData.expense_list.hasOwnProperty(category)) {
+                    const expenseValue = currentData.expense_list[category];
                     const expenseInput = document.querySelector(`input[name="${category}"]`);
                     if (expenseInput) {
                         expenseInput.value = expenseValue;
