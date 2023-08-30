@@ -81,6 +81,7 @@ def update_expenses(current_user_token):
     expense.total_expenses = request.json['total_expenses']
     expense.surplus_deficit = request.json['surplus_deficit']
     expense.user_token = current_user_token.token
+    print('hello')
 
     db.session.commit()
     response = expense_schema.dump(expense)
