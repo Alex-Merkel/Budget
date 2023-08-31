@@ -287,15 +287,10 @@
             });
         }
 
-        // ***Function to handle Enter key press in input boxes
-        // function handleKeyUp(event, category) {
-        //     if (event.key === 'Enter') {
-        //         updateData();
-        //     }
-        // }
 
-        function handleBlur(event, category) {
-            const inputValue = parseFloat(event.target.value);
+        // Function to handle updating data based on input value change
+        function handleInputValueChange(input, category) {
+            const inputValue = parseFloat(input.value);
             const storedValue = currentData.expense_list[category];
             
             if (!isNaN(inputValue) && inputValue !== storedValue) {
@@ -303,88 +298,91 @@
             }
         }
 
-        // Handle updateData when user clicks out of input box or changes values using arrows
+        // Add blur event listeners to input boxes
         const inputBoxes = document.querySelectorAll('input[type="number"]');
         inputBoxes.forEach(input => {
             input.addEventListener('blur', event => {
                 const category = event.target.getAttribute('name');
-                handleBlur(event, category);
+                handleInputValueChange(event.target, category);
             });
         });
+
+        // Add keyup event listener for Enter key to update values
+        document.addEventListener('keyup', event => {
+            if (event.key === 'Enter') {
+                const activeInput = document.activeElement;
+                if (activeInput.tagName === 'INPUT' && activeInput.type === 'number') {
+                    const category = activeInput.getAttribute('name');
+                    handleInputValueChange(activeInput, category);
+                }
+            }
+        });
+
         
         
-        // function showExpensePopup(category) {
-        //     var popup = document.getElementById("expense-popup");
-        //     popup.style.display = "block";
+        function showExpensePopup(category) {
+            let popup = document.getElementById("expense-popup");
+            console.log(popup)
+            popup.style.display = "block";
 
-        //     var expenseNameInput = document.getElementById("expense-name-input");
-        //     expenseNameInput.value = '';
+            let expenseNameInput = document.getElementById("expense-name-input");
+            expenseNameInput.value = '';
 
-        //     var expenseValueInput = document.getElementById("expense-value-input");
-        //     expenseValueInput.value = '';
+            let expenseValueInput = document.getElementById("expense-value-input");
+            expenseValueInput.value = '';
 
-        //     popup.setAttribute('data-category', category);
-        // }
+            popup.setAttribute('data-category', category);
+            console.log(popup)
+        }
 
-        // function saveExpense() {
+        function saveExpense() {
             
-        //     var expenseNameInput = document.getElementById('expense-name-input');
-        //     var expenseValueInput = document.getElementById('expense-value-input');
-        //     var category = document.getElementById('expense-popup').getAttribute('data-category');
+            let expenseNameInput = document.getElementById('expense-name-input');
+            let expenseValueInput = document.getElementById('expense-value-input');
+            let category = document.getElementById('expense-popup').getAttribute('data-category');
 
-        //     var expenseName = expenseNameInput.value;
-        //     var expenseValue = expenseValueInput.value;
+            let expenseName = expenseNameInput.value;
+            console.log(expenseName)
+            let expenseValue = expenseValueInput.value;
+            console.log(expenseValue)
 
-        //     if (!expenseName) {
-        //         alert('Expense name is required.');
-        //         return;
-        //     }
+            if (!expenseName) {
+                alert('Expense name is required.');
+                return;
+            }
 
-        //     // Send the expense data to the API endpoint
-        //     var data = {
-        //         [expenseName]: parseFloat(expenseValue)
-        //     };
+            currentData.expense_list[expenseName] = parseFloat(expenseValue);
 
-        //     fetch('/api/expenses', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             'x-access-token': 'Bearer ' + token
-        //         },
-        //         body: JSON.stringify(data)
-        //     })
-        //     .then(response => {
-        //         if (response.ok) {
-        //             // Add the expense to the grid
-        //             var expenseSection = document.createElement('div');
-        //             expenseSection.classList.add('grid-item', 'bg-dark', 'border-gray');
+            // Update data in database with new expense included
+            
 
-        //             var expenseNameHeader = document.createElement('h5');
-        //             expenseNameHeader.textContent = expenseName;
-        //             expenseSection.appendChild(expenseNameHeader);
+            // Add the expense to the grid
+            let expenseSection = document.createElement('div');
+            expenseSection.classList.add('grid-item', 'bg-dark', 'border-gray');
 
-        //             var expenseValueInput = document.createElement('input');
-        //             expenseValueInput.type = 'text';
-        //             expenseValueInput.value = expenseValue;
-        //             expenseValueInput.name = category;
-        //             expenseSection.appendChild(expenseValueInput);
+            let expenseNameHeader = document.createElement('h5');
+            expenseNameHeader.textContent = expenseName;
+            expenseSection.appendChild(expenseNameHeader);
 
-        //             var container = document.getElementById(category);
-        //             container.insertBefore(expenseSection, container.lastElementChild);
+            let newExpenseValueInput = document.createElement('input');
+            newExpenseValueInput.type = 'number';
+            newExpenseValueInput.value = expenseValue;
+            newExpenseValueInput.name = expenseName;
+            expenseSection.appendChild(newExpenseValueInput);
+            
+            console.log(category)
+            let container = document.getElementById(category)
+            console.log(container)
 
-        //             closePopup();
-        //         } else {
-        //             alert('Failed to add the expense. Please try again.');
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error('Error:', error);
-        //         alert('An error occurred. Please try again.');
-        //     });
-        // }
+            container.insertBefore(expenseSection, container.lastElementChild);
+            console.log(currentData)
+            updateData(currentData);
+
+            closePopup();
+        }
 
         function closePopup() {
-            var popup = document.getElementById("expense-popup");
+            let popup = document.getElementById("expense-popup");
             popup.style.display = "none";
         }
     </script>
