@@ -76,6 +76,7 @@ def update_expenses(current_user_token):
     if not expense:
         return jsonify({"message": "Expense list not found."}), 404
 
+    print('hello')
     expense.expense_list = request.json['expense_list']
     expense.income = request.json['income']
     expense.total_expenses = request.json['total_expenses']

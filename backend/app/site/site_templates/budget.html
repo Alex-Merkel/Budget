@@ -136,6 +136,8 @@
         /* Check to see if data already exists for user. If so, call updateBudgetPage() to set data.
         If not, call createDefaultData() to set initial values in database for said user */
         function checkForData() {
+
+
             fetch('/api/checkexpenses', {
                 method: 'GET',
                 headers: {
@@ -155,6 +157,7 @@
                             console.log('No data found, creating default data...');
                             createDefaultData();
                         } else {
+             
                             updateBudgetPage(currentData);
                         }
                     })
@@ -234,7 +237,7 @@
             document.getElementById('total_expenses').value = currentData.total_expenses;
             document.getElementById('surplus_deficit').value = currentData.surplus_deficit;
 
-        // Update expense input values for each category.
+            // Update expense input values for each category.
             for (const category in currentData.expense_list) {
                 if (currentData.expense_list.hasOwnProperty(category)) {
                     const expenseValue = currentData.expense_list[category];
@@ -250,16 +253,24 @@
         // Function to update data in database when user changes data in any expense category or the total income
         function updateData() {
             // Get updated values from input boxes, then calculate total_expenses and surplus_deficit
+
+            console.log('test1')
             const income = parseFloat(document.getElementById('income').value);
+            console.log('income', income)
             const expense_list = {};
             for (const category in currentData.expense_list) {
                 if (currentData.expense_list.hasOwnProperty(category)) {
+                    console.log('current category', category)
                     const inputValue = parseFloat(document.querySelector(`input[name="${category}"]`).value);
+                    console.log(`Category: ${category}, Input Value: ${inputValue}`)
                     expense_list[category] = inputValue;
+                    console.log(expense_list)
                 }
             }
+            console.log('test3')
             const total_expenses = calculateTotalExpenses(expense_list)
             const surplus_deficit = income - total_expenses
+            console.log('test4')
 
             // Save updated data to the database
             fetch('/api/updateexpenses', {
@@ -343,15 +354,16 @@
 
             let expenseName = expenseNameInput.value;
             console.log(expenseName)
-            let expenseValue = expenseValueInput.value;
+            let expenseValue = parseFloat(expenseValueInput.value);
             console.log(expenseValue)
 
-            if (!expenseName) {
-                alert('Expense name is required.');
+            if (!expenseName || isNaN(expenseValue)) { // Check if expenseValue is valid
+                alert('Please enter a valid expense name and value.');
                 return;
             }
 
-            currentData.expense_list[expenseName] = parseFloat(expenseValue);
+            // currentData.expense_list[expenseName] = parseFloat(expenseValue);
+
 
             // Update data in database with new expense included
             
@@ -376,7 +388,10 @@
 
             container.insertBefore(expenseSection, container.lastElementChild);
             console.log(currentData)
-            updateData(currentData);
+            
+
+            currentData.expense_list[expenseName] = expenseValue
+            updateData(currentData)
 
             closePopup();
         }
