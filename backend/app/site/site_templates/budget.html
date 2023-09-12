@@ -42,7 +42,7 @@
       
             <div class="row">
                 <div class="col-4">
-                    <div class="grid-container text-success" id="needs">
+                    <div class="grid-container text-success" id="needs-container">
                         <div class="grid-item bg-dark border-gray">
                             <h5>Housing</h5>
                             <input type="number" name="housing">
@@ -74,7 +74,7 @@
                 </div>
 
                 <div class="col-4">
-                    <div class="grid-container text-success" id="savings">
+                    <div class="grid-container text-success" id="savings-container">
                         <div class="grid-item bg-dark border-gray">
                             <h5>Emergency Fund</h5>
                             <input type="number" name="emergency_fund">
@@ -94,7 +94,7 @@
                 </div>
 
                 <div class="col-4">
-                    <div class="grid-container text-success" id="wants">
+                    <div class="grid-container text-success" id="wants-container">
                         <div class="grid-item bg-dark border-gray">
                             <h5>Entertainment</h5>
                             <input type="number" name="entertainment">
@@ -237,40 +237,80 @@
             document.getElementById('total_expenses').value = currentData.total_expenses;
             document.getElementById('surplus_deficit').value = currentData.surplus_deficit;
 
-            // Update expense input values for each category.
-            for (const category in currentData.expense_list) {
-                if (currentData.expense_list.hasOwnProperty(category)) {
+            // Loop through needs, savings, and wants categories
+            ['needs', 'savings', 'wants'].forEach(categoryType => {
+                const categoryContainer = document.getElementById(`${categoryType}-container`);
+                const categoryArray = currentData[categoryType];
+
+                // Clear the category container
+                categoryContainer.innerHTML = '';
+
+                // Loop through categories within the category type
+                categoryArray.forEach(category => {
                     const expenseValue = currentData.expense_list[category];
-                    const expenseInput = document.querySelector(`input[name="${category}"]`);
-                    if (expenseInput) {
-                        expenseInput.value = expenseValue;
-                    }
-                }
-            }
+
+                    // Create a div for the expense
+                    const expenseDiv = document.createElement('div');
+                    expenseDiv.classList.add('grid-item', 'bg-dark', 'border-gray');
+
+                    // Create an h5 element for the category name
+                    const expenseNameHeader = document.createElement('h5');
+                    expenseNameHeader.textContent = category;
+
+                    // Create an input element for the expense value
+                    const expenseValueInput = document.createElement('input');
+                    expenseValueInput.type = 'number';
+                    expenseValueInput.name = category;
+                    expenseValueInput.value = expenseValue;
+
+                    // Append the elements to the category container
+                    expenseDiv.appendChild(expenseNameHeader);
+                    expenseDiv.appendChild(expenseValueInput);
+                    categoryContainer.appendChild(expenseDiv);
+                });
+
+                // Create a button to add expenses to this category
+                const addExpenseButton = document.createElement('button');
+                addExpenseButton.textContent = 'Add Expense';
+                addExpenseButton.onclick = () => showExpensePopup(categoryType);
+                categoryContainer.appendChild(addExpenseButton);
+            });
         }
+
 
 
         // Function to update data in database when user changes data in any expense category or the total income
         function updateData() {
             // Get updated values from input boxes, then calculate total_expenses and surplus_deficit
-
-            console.log('test1')
             const income = parseFloat(document.getElementById('income').value);
-            console.log('income', income)
             const expense_list = {};
+            console.log(currentData)
+            // Create separate arrays for needs, savings, and wants
+            const needs = [];
+            const savings = [];
+            const wants = [];
+            
             for (const category in currentData.expense_list) {
                 if (currentData.expense_list.hasOwnProperty(category)) {
-                    console.log('current category', category)
                     const inputValue = parseFloat(document.querySelector(`input[name="${category}"]`).value);
-                    console.log(`Category: ${category}, Input Value: ${inputValue}`)
+                    console.log(inputValue)
+                    console.log(category, 'waterbuffalo')
                     expense_list[category] = inputValue;
-                    console.log(expense_list)
+                    
+                    
+                    // Check the category and add to the appropriate array
+                    if (currentData.needs.includes(category)) {
+                        needs.push(category);
+                    } else if (currentData.savings.includes(category)) {
+                        savings.push(category);
+                    } else {
+                        wants.push(category);
+                    }
                 }
             }
-            console.log('test3')
-            const total_expenses = calculateTotalExpenses(expense_list)
-            const surplus_deficit = income - total_expenses
-            console.log('test4')
+            
+            const total_expenses = calculateTotalExpenses(expense_list);
+            const surplus_deficit = income - total_expenses;
 
             // Save updated data to the database
             fetch('/api/updateexpenses', {
@@ -283,13 +323,18 @@
                     income: income,
                     expense_list: expense_list,
                     total_expenses: total_expenses,
-                    surplus_deficit: surplus_deficit
+                    surplus_deficit: surplus_deficit,
+                    needs: needs,
+                    savings: savings,
+                    wants: wants
                 })
             })
             .then(response => response.json())
             .then(data => {
-                // Call updated data back from database after updating and set values on page
-                currentData = data
+                // Call updated data back from the database after updating and set values on the page
+                console.log(data)
+                currentData = data;
+                console.log(currentData)
                 updateBudgetPage(currentData);
             })
             .catch(error => {
@@ -297,6 +342,7 @@
                 alert('An error occurred while updating data. Please try again.');
             });
         }
+
 
 
         // Function to handle updating data based on input value change
@@ -333,7 +379,6 @@
         
         function showExpensePopup(category) {
             let popup = document.getElementById("expense-popup");
-            console.log(popup)
             popup.style.display = "block";
 
             let expenseNameInput = document.getElementById("expense-name-input");
@@ -343,58 +388,52 @@
             expenseValueInput.value = '';
 
             popup.setAttribute('data-category', category);
-            console.log(popup)
         }
 
+
         function saveExpense() {
-            
             let expenseNameInput = document.getElementById('expense-name-input');
             let expenseValueInput = document.getElementById('expense-value-input');
             let category = document.getElementById('expense-popup').getAttribute('data-category');
 
             let expenseName = expenseNameInput.value;
-            console.log(expenseName)
             let expenseValue = parseFloat(expenseValueInput.value);
-            console.log(expenseValue)
 
-            if (!expenseName || isNaN(expenseValue)) { // Check if expenseValue is valid
+            if (!expenseName || isNaN(expenseValue)) {
                 alert('Please enter a valid expense name and value.');
                 return;
             }
 
-            // currentData.expense_list[expenseName] = parseFloat(expenseValue);
+            // Create a new expense div
+            // let expenseSection = document.createElement('div');
+            // expenseSection.classList.add('grid-item', 'bg-dark', 'border-gray');
 
+            // let expenseNameHeader = document.createElement('h5');
+            // expenseNameHeader.textContent = expenseName;
+            // expenseSection.appendChild(expenseNameHeader);
 
-            // Update data in database with new expense included
+            // let newExpenseValueInput = document.createElement('input');
+            // newExpenseValueInput.type = 'number';
+            // newExpenseValueInput.value = expenseValue;
+            // newExpenseValueInput.name = expenseName;
+            // expenseSection.appendChild(newExpenseValueInput);
+
+            // // Get the container based on the category
+            // let container = document.getElementById(category);
+
+            // Insert the new expense div before the "Add Expense" button
+            // container.insertBefore(expenseSection, container.lastElementChild);
+
+            // Update the currentData.expense_list with the new expense
+            currentData.expense_list[expenseName] = expenseValue;
             
 
-            // Add the expense to the grid
-            let expenseSection = document.createElement('div');
-            expenseSection.classList.add('grid-item', 'bg-dark', 'border-gray');
-
-            let expenseNameHeader = document.createElement('h5');
-            expenseNameHeader.textContent = expenseName;
-            expenseSection.appendChild(expenseNameHeader);
-
-            let newExpenseValueInput = document.createElement('input');
-            newExpenseValueInput.type = 'number';
-            newExpenseValueInput.value = expenseValue;
-            newExpenseValueInput.name = expenseName;
-            expenseSection.appendChild(newExpenseValueInput);
-            
-            console.log(category)
-            let container = document.getElementById(category)
-            console.log(container)
-
-            container.insertBefore(expenseSection, container.lastElementChild);
-            console.log(currentData)
-            
-
-            currentData.expense_list[expenseName] = expenseValue
-            updateData(currentData)
+            // Update data in the database
+            updateData();
 
             closePopup();
         }
+
 
         function closePopup() {
             let popup = document.getElementById("expense-popup");

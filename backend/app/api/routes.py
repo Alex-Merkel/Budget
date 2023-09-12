@@ -13,6 +13,9 @@ def get_expenses(current_user_token):
         response = {
             "message": "Expense data saved successfully.",
             "expense_list": expense.expense_list,
+            "needs": expense.needs,
+            "savings": expense.savings,
+            "wants": expense.wants,
             "income": expense.income,
             "total_expenses": expense.total_expenses,
             "surplus_deficit": expense.surplus_deficit
@@ -41,6 +44,24 @@ def create_expenses(current_user_token):
         'dining_out': 0,
         'hobbies': 0
     }
+    needs = [
+        'housing',
+        'transportation',
+        'groceries',
+        'utilities',
+        'healthcare',
+        'debt_payments'
+    ]
+    savings = [
+        'emergency_fund',
+        'retirement',
+        'vacation'
+    ]
+    wants = [
+        'entertainment',
+        'dining_out',
+        'hobbies'
+    ]
     income = 0
     total_expenses = 0
     surplus_deficit = 0
@@ -48,6 +69,9 @@ def create_expenses(current_user_token):
 
     expense = Expense(
         expense_list = expense_list,
+        needs = needs,
+        savings = savings,
+        wants = wants,
         income = income,
         total_expenses = total_expenses,
         surplus_deficit = surplus_deficit,
@@ -75,9 +99,29 @@ def update_expenses(current_user_token):
 
     if not expense:
         return jsonify({"message": "Expense list not found."}), 404
+    
+    expense_name = request.json.get('expense_name')
+    expense_value = request.json.get('expense_value')
+
+    if expense_name and expense_value:
+        # Update the expense_list with the custom expense
+        expense.expense_list[expense_name] = expense_value
+
+    category = request.json.get('category')
+    print(category)
+    print(request.json)
+    if category == 'needs':
+        expense.needs.append(expense_name)
+    elif category == 'savings':
+        expense.savings.append(expense_name)
+    elif category == 'wants':
+        expense.wants.append(expense_name)    
 
     print('hello')
     expense.expense_list = request.json['expense_list']
+    expense.needs = request.json['needs']
+    expense.savings = request.json['savings']
+    expense.wants = request.json['wants']
     expense.income = request.json['income']
     expense.total_expenses = request.json['total_expenses']
     expense.surplus_deficit = request.json['surplus_deficit']
