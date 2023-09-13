@@ -29,7 +29,7 @@ def get_expenses(current_user_token):
 @api.route('/createexpenses', methods=['GET', 'POST'])
 @token_required
 def create_expenses(current_user_token):
-    
+    # Default expenses if no data in db for user
     expense_list = {
         'housing': 0,
         'transportation': 0,
@@ -107,9 +107,8 @@ def update_expenses(current_user_token):
         # Update the expense_list with the custom expense
         expense.expense_list[expense_name] = expense_value
 
+    # Determine what category possible user added / custom expense needs to go to
     category = request.json.get('category')
-    print(category)
-    print(request.json)
     if category == 'needs':
         expense.needs.append(expense_name)
     elif category == 'savings':
@@ -117,7 +116,6 @@ def update_expenses(current_user_token):
     elif category == 'wants':
         expense.wants.append(expense_name)    
 
-    print('hello')
     expense.expense_list = request.json['expense_list']
     expense.needs = request.json['needs']
     expense.savings = request.json['savings']
@@ -132,13 +130,19 @@ def update_expenses(current_user_token):
     return jsonify(response)
 
 
-@api.route('/deleteexpenses', methods=['DELETE'])
-def delete_expenses(current_user_token):
-    expense = Expense.query.get(id)
+@api.route('/resetexpenses', methods=['DELETE'])
+@token_required
+def reset_expenses(current_user_token):
+    if not current_user_token:
+        return jsonify({"message": "Token is missing or invalid."}), 401
+
+    user_token = current_user_token.token
+
+    expense = Expense.query.filter_by(user_token=user_token).first()
     if expense:
         db.session.delete(expense)
         db.session.commit()
         response = expense_schema.dump(expense)
-        return jsonify({'message': 'Expense list deleted'}), 200
+        return jsonify({'message': 'Expense list reset'}), 200
     else:
         return jsonify({'message': 'Expense list not found'}), 404
