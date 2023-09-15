@@ -16,7 +16,7 @@
             <div class="row text-center" id="budget_header">
                 <div class="col-4">
                     <h2>Monthly Income:</h2>
-                    <input type="number" name="income" id="income" oninput="handleInputValueChange(event, 'income')">
+                    <input type="number" name="income" id="income" onblur="handleInputValueChange(event, 'income')">
                 </div>
                 <div class="col-4">
                     <h2>Total Expenses:</h2>
@@ -113,6 +113,12 @@
                     </div>
                 </div>
             </div>
+
+            <div class="text-center mt-3">
+                <button onclick="resetValues()">
+                    Reset
+                </button>
+            </div>
         </div>
     </div>
 
@@ -195,6 +201,7 @@
                     .then(data => {
                         // Set currentData equal to default data and display accordingly:
                         currentData = data
+                        console.log(data)
                         updateBudgetPage(currentData)
                     })
                     .catch(error => {
@@ -210,6 +217,7 @@
                 alert('An error occurred. Please try again.');
             });
         }
+
 
 
         // Calculate the total expenses by getting the sum of all values in each expense category
@@ -244,7 +252,10 @@
 
                     // Create an h5 element for the category name
                     const expenseNameHeader = document.createElement('h5');
-                    expenseNameHeader.textContent = category;
+                    const capitalizedCategory = category.split(' ').map(word => {
+                        return word.charAt(0).toUpperCase() + word.slice(1);
+                    }).join(' ');
+                    expenseNameHeader.textContent = capitalizedCategory;
 
                     // Create an input element for the expense value
                     const expenseValueInput = document.createElement('input');
@@ -301,7 +312,6 @@
             .then(response => response.json())
             .then(data => {
                 // Call updated data back from the database after updating and set values on the page
-                // currentData = data; ***Shouldn't need, unless it doesn't change income in currentData somewhere, leave commented out for now ***
                 updateBudgetPage(data);
             })
             .catch(error => {
@@ -327,7 +337,6 @@
                 currentData.total_expenses = calculateTotalExpenses(currentData.expense_list);
                 currentData.surplus_deficit = currentData.income - currentData.total_expenses;
 
-                // Update data
                 updateData();
             } else if (category !== 'income' && inputValue !== currentData.expense_list[category]) {
                 // Update an expense in currentData
@@ -337,56 +346,16 @@
                 currentData.total_expenses = calculateTotalExpenses(currentData.expense_list);
                 currentData.surplus_deficit = currentData.income - currentData.total_expenses;
 
-                // Update data
                 updateData();
             }
         }
 
-        // document.addEventListener('keyup', event => {
-        //     if (event.key === 'Enter') {
-        //         const activeInput = document.activeElement;
-        //         if (activeInput.tagName === 'INPUT' && activeInput.type === 'number') {
-        //             const category = activeInput.getAttribute('name');
-        //             handleInputValueChange(activeInput, category);
-        //         }
-        //     }
-        // });
-
-
-        // const incomeInput = document.getElementById('income');
-
-        // // Store the initial value of the income input
-        // let incomeInputInitialValue = incomeInput.value;
-
-        // // Add a focus event listener to store the initial value when the income input gains focus
-        // incomeInput.addEventListener('focus', event => {
-        //     incomeInputInitialValue = event.target.value;
-        // });
-
-        // // Add a blur event listener to the income input element
-        // incomeInput.addEventListener('blur', event => {
-        //     const currentValue = event.target.value;
-
-        //     if (currentValue !== incomeInputInitialValue) {
-        //         // Update income in currentData
-        //         currentData.income = parseFloat(currentValue);
-
-        //         // Update total_expenses and surplus_deficit
-        //         currentData.total_expenses = calculateTotalExpenses(currentData.expense_list);
-        //         currentData.surplus_deficit = currentData.income - currentData.total_expenses;
-
-        //         // Update data
-        //         updateData();
-        //     }
-        // });
-
-        // Add a keyup event listener to handle Enter key press
         document.addEventListener('keyup', event => {
             if (event.key === 'Enter') {
                 const activeInput = document.activeElement;
-                if (activeInput.tagName === 'INPUT' && activeInput.type === 'number') {
-                const category = activeInput.getAttribute('name');
-                handleInputValueChange({ target: activeInput }, category);
+                if (activeInput && activeInput.tagName === 'INPUT' && activeInput.type === 'number') {
+                    const category = activeInput.getAttribute('name');
+                    handleInputValueChange(event, category);
                 }
             }
         });
@@ -446,7 +415,55 @@
         function closePopup() {
             let popup = document.getElementById("expense-popup");
             popup.style.display = "none";
-        }  
+        }
+
+
+
+        function resetValues() {
+            currentData = {
+                expense_list: {
+                'housing': 0,
+                'transportation': 0,
+                'groceries': 0,
+                'utilities': 0,
+                'healthcare': 0,
+                'debt payments': 0,
+                'emergency fund': 0,
+                'retirement': 0,
+                'vacation': 0,
+                'entertainment': 0,
+                'dining out': 0,
+                'hobbies': 0
+                },
+                needs: ['housing', 'transportation', 'groceries', 'utilities', 'healthcare', 'debt payments'],
+                savings: ['emergency fund', 'retirement', 'vacation'],
+                wants: ['entertainment', 'dining out', 'hobbies'],
+                income: 0,
+                total_expenses: 0,
+                surplus_deficit: 0
+            }
+
+            // Update the data in the database with the default data
+            fetch('/api/updateexpenses', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': 'Bearer ' + token
+                },
+                body: JSON.stringify(currentData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update the page with the updated data
+                currentData = data;
+                updateBudgetPage(currentData);
+            })
+            .catch(error => {
+                console.error('Error updating data:', error);
+                alert('An error occurred while updating data. Please try again.');
+            });
+        }
+
 
     </script>
 

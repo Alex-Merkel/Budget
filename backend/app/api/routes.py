@@ -36,12 +36,12 @@ def create_expenses(current_user_token):
         'groceries': 0,
         'utilities': 0,
         'healthcare': 0,
-        'debt_payments': 0,
-        'emergency_fund': 0,
+        'debt payments': 0,
+        'emergency fund': 0,
         'retirement': 0,
         'vacation': 0,
         'entertainment': 0,
-        'dining_out': 0,
+        'dining out': 0,
         'hobbies': 0
     }
     needs = [
@@ -50,16 +50,16 @@ def create_expenses(current_user_token):
         'groceries',
         'utilities',
         'healthcare',
-        'debt_payments'
+        'debt payments'
     ]
     savings = [
-        'emergency_fund',
+        'emergency fund',
         'retirement',
         'vacation'
     ]
     wants = [
         'entertainment',
-        'dining_out',
+        'dining out',
         'hobbies'
     ]
     income = 0
@@ -90,7 +90,6 @@ def create_expenses(current_user_token):
 @api.route('/updateexpenses', methods=['GET', 'PUT'])
 @token_required
 def update_expenses(current_user_token):
-    print(current_user_token)
     if not current_user_token:
         return jsonify({"message": "Token is missing or invalid."}), 401
 
@@ -129,21 +128,3 @@ def update_expenses(current_user_token):
     db.session.commit()
     response = expense_schema.dump(expense)
     return jsonify(response)
-
-
-@api.route('/resetexpenses', methods=['DELETE'])
-@token_required
-def reset_expenses(current_user_token):
-    if not current_user_token:
-        return jsonify({"message": "Token is missing or invalid."}), 401
-
-    user_token = current_user_token.token
-
-    expense = Expense.query.filter_by(user_token=user_token).first()
-    if expense:
-        db.session.delete(expense)
-        db.session.commit()
-        response = expense_schema.dump(expense)
-        return jsonify({'message': 'Expense list reset'}), 200
-    else:
-        return jsonify({'message': 'Expense list not found'}), 404
