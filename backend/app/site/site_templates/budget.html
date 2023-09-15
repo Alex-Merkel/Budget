@@ -16,7 +16,7 @@
             <div class="row text-center" id="budget_header">
                 <div class="col-4">
                     <h2>Monthly Income:</h2>
-                    <input type="number" name="income" id="income" onkeyup="handleKeyUp(event, 'income')">
+                    <input type="number" name="income" id="income" oninput="handleInputValueChange(event, 'income')">
                 </div>
                 <div class="col-4">
                     <h2>Total Expenses:</h2>
@@ -40,7 +40,7 @@
                 </div>
             </div>
       
-            <div class="row">
+            <div class="row" id="expense-containers">
                 <div class="col-4">
                     <div class="grid-container text-success" id="needs-container">
                         <div class="grid-item bg-dark border-gray">
@@ -133,6 +133,8 @@
         const token = "{{ current_user.token }}"
         let currentData = {};
 
+        checkForData()
+
         /* Check to see if data already exists for user. If so, call updateBudgetPage() to set data.
         If not, call createDefaultData() to set initial values in database for said user */
         async function checkForData() {
@@ -171,7 +173,6 @@
         /* Create default data - each monetary category to value of 0, create user_id using UUID,
         and get user_token from User table to tie to Expense table */
         function createDefaultData() {
-            // Create default data:
             fetch('/api/createexpenses', {
                 method: 'POST',
                 headers: {
@@ -250,6 +251,26 @@
                     expenseValueInput.type = 'number';
                     expenseValueInput.name = category;
                     expenseValueInput.value = expenseValue;
+                    expenseValueInput.classList.add('expense-input')
+
+                    // Add a data attribute to store the initial value
+                    expenseValueInput.dataset.initialValue = expenseValue;
+
+                    // Add a focus event listener to store the initial value when the input gains focus
+                    expenseValueInput.addEventListener('focus', event => {
+                        event.target.dataset.initialValue = event.target.value;
+                    });
+
+                    // Add a blur event listener to the input element
+                    expenseValueInput.addEventListener('blur', event => {
+                        const category = event.target.getAttribute('name');
+                        const initialValue = event.target.dataset.initialValue;
+                        const currentValue = event.target.value;
+
+                        if (currentValue !== initialValue) {
+                            handleInputValueChange(event, category);
+                        }
+                    });
 
                     // Append the elements to the category container
                     expenseDiv.appendChild(expenseNameHeader);
@@ -269,7 +290,6 @@
 
         // Function to update data in database when user changes data in any expense category, the monthly income, or adds a custom expense
         function updateData() {
-            // Save updated data to the database
             fetch('/api/updateexpenses', {
                 method: 'PUT',
                 headers: {
@@ -293,17 +313,25 @@
 
 
         // Function to handle updating data based on input value change
-        function handleInputValueChange(input, category) {
-            const inputValue = parseFloat(input.value);
+        function handleInputValueChange(event, category) {
+            console.log('Handling input change:', category, event.target.value);
+            
+            const inputValue = parseFloat(event.target.value);
+            console.log(category, currentData.income, inputValue)
 
-            if (!isNaN(inputValue)) {
-                if (category === 'income') {
-                    // Update income in currentData
-                    currentData.income = inputValue;
-                } else if (inputValue !== currentData.expense_list[category]) {
-                    // Update an expense in currentData
-                    currentData.expense_list[category] = inputValue;
-                }
+            if (category === 'income' && currentData.income !== inputValue) {
+                // Update income in currentData
+                currentData.income = inputValue;
+
+                // Update total_expenses and surplus_deficit
+                currentData.total_expenses = calculateTotalExpenses(currentData.expense_list);
+                currentData.surplus_deficit = currentData.income - currentData.total_expenses;
+
+                // Update data
+                updateData();
+            } else if (category !== 'income' && inputValue !== currentData.expense_list[category]) {
+                // Update an expense in currentData
+                currentData.expense_list[category] = inputValue;
 
                 // Update total_expenses and surplus_deficit
                 currentData.total_expenses = calculateTotalExpenses(currentData.expense_list);
@@ -314,30 +342,56 @@
             }
         }
 
+        // document.addEventListener('keyup', event => {
+        //     if (event.key === 'Enter') {
+        //         const activeInput = document.activeElement;
+        //         if (activeInput.tagName === 'INPUT' && activeInput.type === 'number') {
+        //             const category = activeInput.getAttribute('name');
+        //             handleInputValueChange(activeInput, category);
+        //         }
+        //     }
+        // });
 
 
-        // Add blur event listeners to input boxes
-        const inputBoxes = document.querySelectorAll('input[type="number"]');
-        inputBoxes.forEach(input => {
-            input.addEventListener('blur', event => {
-                const category = event.target.getAttribute('name');
-                handleInputValueChange(event.target, category);
-            });
-        });
+        // const incomeInput = document.getElementById('income');
 
+        // // Store the initial value of the income input
+        // let incomeInputInitialValue = incomeInput.value;
 
-        // Add keyup event listener for Enter key to update values
+        // // Add a focus event listener to store the initial value when the income input gains focus
+        // incomeInput.addEventListener('focus', event => {
+        //     incomeInputInitialValue = event.target.value;
+        // });
+
+        // // Add a blur event listener to the income input element
+        // incomeInput.addEventListener('blur', event => {
+        //     const currentValue = event.target.value;
+
+        //     if (currentValue !== incomeInputInitialValue) {
+        //         // Update income in currentData
+        //         currentData.income = parseFloat(currentValue);
+
+        //         // Update total_expenses and surplus_deficit
+        //         currentData.total_expenses = calculateTotalExpenses(currentData.expense_list);
+        //         currentData.surplus_deficit = currentData.income - currentData.total_expenses;
+
+        //         // Update data
+        //         updateData();
+        //     }
+        // });
+
+        // Add a keyup event listener to handle Enter key press
         document.addEventListener('keyup', event => {
             if (event.key === 'Enter') {
                 const activeInput = document.activeElement;
                 if (activeInput.tagName === 'INPUT' && activeInput.type === 'number') {
-                    const category = activeInput.getAttribute('name');
-                    handleInputValueChange(activeInput, category);
+                const category = activeInput.getAttribute('name');
+                handleInputValueChange({ target: activeInput }, category);
                 }
             }
         });
 
-        
+
         
         function showExpensePopup(category) {
             let popup = document.getElementById("expense-popup");
@@ -392,11 +446,7 @@
         function closePopup() {
             let popup = document.getElementById("expense-popup");
             popup.style.display = "none";
-        }
-
-
-        // Call checkForData() to initialize data check / page:
-        checkForData()
+        }  
 
     </script>
 

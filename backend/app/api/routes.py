@@ -90,6 +90,7 @@ def create_expenses(current_user_token):
 @api.route('/updateexpenses', methods=['GET', 'PUT'])
 @token_required
 def update_expenses(current_user_token):
+    print(current_user_token)
     if not current_user_token:
         return jsonify({"message": "Token is missing or invalid."}), 401
 
