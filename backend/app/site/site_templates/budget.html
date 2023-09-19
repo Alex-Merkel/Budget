@@ -20,11 +20,11 @@
                 </div>
                 <div class="col-4">
                     <h2>Total Expenses:</h2>
-                    <input type="text" name="total_expenses" id="total_expenses">
+                    <input type="number" name="total_expenses" id="total_expenses">
                 </div>
                 <div class="col-4">
                     <h2>Surplus/Deficit:</h2>
-                    <input type="text" name="surplus_deficit" id="surplus_deficit">
+                    <input type="number" name="surplus_deficit" id="surplus_deficit">
                 </div>
             </div>
 
@@ -65,7 +65,7 @@
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Debt Payments</h5>
-                            <input type="number" name="debt_payments">
+                            <input type="number" name="debt payments">
                         </div>
                         <div class="grid-item bg-dark">
                             <button onclick="showExpensePopup('needs')">Add Expense</button>
@@ -77,7 +77,7 @@
                     <div class="grid-container text-success" id="savings-container">
                         <div class="grid-item bg-dark border-gray">
                             <h5>Emergency Fund</h5>
-                            <input type="number" name="emergency_fund">
+                            <input type="number" name="emergency fund">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Retirement</h5>
@@ -101,7 +101,7 @@
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Dining Out</h5>
-                            <input type="number" name="dining_out">
+                            <input type="number" name="dining out">
                         </div>
                         <div class="grid-item bg-dark border-gray">
                             <h5>Hobbies</h5>
@@ -185,7 +185,44 @@
                     'Content-Type': 'application/json',
                     'x-access-token': 'Bearer ' + token
                 },
-                body: JSON.stringify()
+                body: JSON.stringify({
+                    expense_list : {
+                        'housing': 0.00,
+                        'transportation': 0.00,
+                        'groceries': 0.00,
+                        'utilities': 0.00,
+                        'healthcare': 0.00,
+                        'debt payments': 0.00,
+                        'emergency fund': 0.00,
+                        'retirement': 0.00,
+                        'vacation': 0.00,
+                        'entertainment': 0.00,
+                        'dining out': 0.00,
+                        'hobbies': 0.00
+                    },
+                    needs : [
+                        'housing',
+                        'transportation',
+                        'groceries',
+                        'utilities',
+                        'healthcare',
+                        'debt payments'
+                    ],
+                    savings : [
+                        'emergency fund',
+                        'retirement',
+                        'vacation'
+                    ],
+                    wants : [
+                        'entertainment',
+                        'dining out',
+                        'hobbies'
+                    ],
+                    income : 0.00,
+                    total_expenses : 0.00,
+                    surplus_deficit : 0.00,
+                    user_token : token
+                })
             })
             .then(response => {
                 if (response.ok) {
@@ -201,7 +238,6 @@
                     .then(data => {
                         // Set currentData equal to default data and display accordingly:
                         currentData = data
-                        console.log(data)
                         updateBudgetPage(currentData)
                     })
                     .catch(error => {
@@ -222,17 +258,19 @@
 
         // Calculate the total expenses by getting the sum of all values in each expense category
         function calculateTotalExpenses(expense_list) {
+            console.log(expense_list)
             const values = Object.values(expense_list);
-            return values.reduce((total, expenseValue) => total + expenseValue, 0);
+            console.log(values)
+            return values.reduce((total, expenseValue) => total + expenseValue, 0.00);
         }
 
 
 
         // Get values for income, total_expenses, and surplus_deficit from database and set data in respective spots in HTML
         function updateBudgetPage(currentData) {
-            document.getElementById('income').value = currentData.income;
-            document.getElementById('total_expenses').value = currentData.total_expenses;
-            document.getElementById('surplus_deficit').value = currentData.surplus_deficit;
+            document.getElementById('income').value = formatCurrency(currentData.income);
+            document.getElementById('total_expenses').value = formatCurrency(currentData.total_expenses);
+            document.getElementById('surplus_deficit').value = formatCurrency(currentData.surplus_deficit);
 
             // Loop through needs, savings, and wants categories
             ['needs', 'savings', 'wants'].forEach(categoryType => {
@@ -244,7 +282,7 @@
 
                 // Loop through categories within the category type
                 categoryArray.forEach(category => {
-                    const expenseValue = currentData.expense_list[category];
+                    const expenseValue = formatCurrency(currentData.expense_list[category]);
 
                     // Create a div for the expense
                     const expenseDiv = document.createElement('div');
@@ -261,7 +299,7 @@
                     const expenseValueInput = document.createElement('input');
                     expenseValueInput.type = 'number';
                     expenseValueInput.name = category;
-                    expenseValueInput.value = expenseValue;
+                    expenseValueInput.value = formatCurrency(expenseValue);
                     expenseValueInput.classList.add('expense-input')
 
                     // Add a data attribute to store the initial value
@@ -298,6 +336,13 @@
         }
 
 
+        function formatCurrency(amount) {
+            const roundedAmount = Math.round(amount * 100) / 100;
+            return roundedAmount.toFixed(2)
+        }
+
+
+
 
         // Function to update data in database when user changes data in any expense category, the monthly income, or adds a custom expense
         function updateData() {
@@ -324,31 +369,38 @@
 
         // Function to handle updating data based on input value change
         function handleInputValueChange(event, category) {
-            console.log('Handling input change:', category, event.target.value);
-            
             const inputValue = parseFloat(event.target.value);
-            console.log(category, currentData.income, inputValue)
 
-            if (category === 'income' && currentData.income !== inputValue) {
-                // Update income in currentData
-                currentData.income = inputValue;
+            // Check if inputValue is a valid number
+            if (!isNaN(inputValue)) {
+                // Round the inputValue to two decimal places
+                const roundedValue = Math.round(inputValue * 100) / 100;
+                const formattedValue = roundedValue.toFixed(2);
+
+                // Update the input field with the formatted value as a number
+                formattedInputValue = parseFloat(formattedValue);
+
+                if (category === 'income' && currentData.income !== formattedInputValue) {
+                    // Update income in currentData as a number
+                    currentData.income = formattedInputValue;
+                } else if (category !== 'income' && formattedInputValue !== currentData.expense_list[category]) {
+                    // Update an expense in currentData as a number
+                    currentData.expense_list[category] = formattedInputValue;
+                }
 
                 // Update total_expenses and surplus_deficit
                 currentData.total_expenses = calculateTotalExpenses(currentData.expense_list);
-                currentData.surplus_deficit = currentData.income - currentData.total_expenses;
+                currentData.surplus_deficit = (parseFloat(currentData.income) - currentData.total_expenses).toFixed(2);
 
+                // Update data in the database
                 updateData();
-            } else if (category !== 'income' && inputValue !== currentData.expense_list[category]) {
-                // Update an expense in currentData
-                currentData.expense_list[category] = inputValue;
-
-                // Update total_expenses and surplus_deficit
-                currentData.total_expenses = calculateTotalExpenses(currentData.expense_list);
-                currentData.surplus_deficit = currentData.income - currentData.total_expenses;
-
-                updateData();
+            } else {
+                // Invalid input, reset the field to the previous value
+                event.target.value = category === 'income' ? currentData.income : currentData.expense_list[category];
             }
         }
+
+
 
         document.addEventListener('keyup', event => {
             if (event.key === 'Enter') {
@@ -361,7 +413,7 @@
         });
 
 
-        
+    
         function showExpensePopup(category) {
             let popup = document.getElementById("expense-popup");
             popup.style.display = "block";
@@ -382,7 +434,7 @@
             let expenseValueInput = document.getElementById('expense-value-input');
             let category = document.getElementById('expense-popup').getAttribute('data-category');
             let expenseName = expenseNameInput.value;
-            let expenseValue = parseFloat(expenseValueInput.value) || 0;
+            let expenseValue = parseFloat(expenseValueInput.value) || 0.00;
 
             if (!expenseName) {
                 alert('Please enter a valid expense name.');
@@ -422,25 +474,25 @@
         function resetValues() {
             currentData = {
                 expense_list: {
-                'housing': 0,
-                'transportation': 0,
-                'groceries': 0,
-                'utilities': 0,
-                'healthcare': 0,
-                'debt payments': 0,
-                'emergency fund': 0,
-                'retirement': 0,
-                'vacation': 0,
-                'entertainment': 0,
-                'dining out': 0,
-                'hobbies': 0
+                'housing': 0.00,
+                'transportation': 0.00,
+                'groceries': 0.00,
+                'utilities': 0.00,
+                'healthcare': 0.00,
+                'debt payments': 0.00,
+                'emergency fund': 0.00,
+                'retirement': 0.00,
+                'vacation': 0.00,
+                'entertainment': 0.00,
+                'dining out': 0.00,
+                'hobbies': 0.00
                 },
                 needs: ['housing', 'transportation', 'groceries', 'utilities', 'healthcare', 'debt payments'],
                 savings: ['emergency fund', 'retirement', 'vacation'],
                 wants: ['entertainment', 'dining out', 'hobbies'],
-                income: 0,
-                total_expenses: 0,
-                surplus_deficit: 0
+                income: 0.00,
+                total_expenses: 0.00,
+                surplus_deficit: 0.00
             }
 
             // Update the data in the database with the default data

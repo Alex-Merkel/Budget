@@ -57,9 +57,9 @@ class Expense(db.Model):
     needs = db.Column(db.JSON, nullable=False)
     savings = db.Column(db.JSON, nullable=False)
     wants = db.Column(db.JSON, nullable=False)
-    income = db.Column(db.Integer, default=0, nullable=False)
-    total_expenses = db.Column(db.Integer, default=0, nullable=False)
-    surplus_deficit = db.Column(db.Integer, default=0, nullable=False)
+    income = db.Column(db.Float, default=0.00, nullable=False)
+    total_expenses = db.Column(db.Float, default=0.00, nullable=False)
+    surplus_deficit = db.Column(db.Float, default=0.00, nullable=False)
     user_token = db.Column(db.String, db.ForeignKey('users.token'), nullable=False)
 
     def __init__(self, expense_list, needs, savings, wants, income, total_expenses, surplus_deficit, user_token, user_id=''):

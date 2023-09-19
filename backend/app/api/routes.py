@@ -31,18 +31,18 @@ def get_expenses(current_user_token):
 def create_expenses(current_user_token):
     # Default expenses if no data in db for user
     expense_list = {
-        'housing': 0,
-        'transportation': 0,
-        'groceries': 0,
-        'utilities': 0,
-        'healthcare': 0,
-        'debt payments': 0,
-        'emergency fund': 0,
-        'retirement': 0,
-        'vacation': 0,
-        'entertainment': 0,
-        'dining out': 0,
-        'hobbies': 0
+        'housing': 0.00,
+        'transportation': 0.00,
+        'groceries': 0.00,
+        'utilities': 0.00,
+        'healthcare': 0.00,
+        'debt payments': 0.00,
+        'emergency fund': 0.00,
+        'retirement': 0.00,
+        'vacation': 0.00,
+        'entertainment': 0.00,
+        'dining out': 0.00,
+        'hobbies': 0.00
     }
     needs = [
         'housing',
@@ -62,9 +62,9 @@ def create_expenses(current_user_token):
         'dining out',
         'hobbies'
     ]
-    income = 0
-    total_expenses = 0
-    surplus_deficit = 0
+    income = 0.00
+    total_expenses = 0.00
+    surplus_deficit = 0.00
     user_token = current_user_token.token
 
     expense = Expense(
