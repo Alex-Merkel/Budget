@@ -1,48 +1,45 @@
 {% extends 'base.html' %}
 
-{% block content %} 
-    <header class="bg-dark text-success text-center shadow py-3">
-        <div class="container p-5 bg-dark">
-            <div class="row">
-                <div class="d-md-flex bg-dark align-items-center justify-content-evenly">
-                    <h1 class="col text-center">{{ current_user.first_name }}'s Budget</h1>
+{% block content %}
+    <!-- Set background image to be fixed -->
+    <div id="budget_background" alt="Image of one dollar bills overlapping in random placements">
+
+        <header class="bg-dark text-success text-center shadow py-3">
+            <div class="container p-5 bg-dark">
+                <div class="row">
+                    <div class="d-md-flex bg-dark align-items-center justify-content-evenly">
+                        <h1 class="col text-center">{{ current_user.first_name }}'s Budget</h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Container for Monthly Income, Total Expenses, and Surplus/Deficit -->
+        <div class="container mb-4">
+            <!-- Monthly Income, Total Expenses, Surplus/Deficit -->
+            <div class="row text-center">
+                <div class="col-lg-4">
+                    <h2 class="text-xl" id="white_outlined_header">Monthly Income:</h2>
+                    <input class="text-center" type="number" name="income" id="income" onblur="handleInputValueChange(event, 'income')">
+                </div>
+                <div class="col-lg-4">
+                    <h2 class="text-xl" id="white_outlined_header">Total Expenses:</h2>
+                    <input class="text-center" type="number" name="total_expenses" id="total_expenses">
+                </div>
+                <div class="col-lg-4">
+                    <h2 class="text-xl" id="white_outlined_header">Surplus/Deficit:</h2>
+                    <input class="text-center" type="number" name="surplus_deficit" id="surplus_deficit">
                 </div>
             </div>
         </div>
-    </header>
+        
 
-    <div style="background-image: url('../../static/img/budgetBackground.jpg'); background-size: cover;" class="vh-100">
+        <!-- Container for Needs, Savings, Wants Headers followed by respective expenses -->
         <div class="container">
-            <div class="row text-center" id="budget_header">
-                <div class="col-4">
-                    <h2>Monthly Income:</h2>
-                    <input type="number" name="income" id="income" onblur="handleInputValueChange(event, 'income')">
-                </div>
-                <div class="col-4">
-                    <h2>Total Expenses:</h2>
-                    <input type="number" name="total_expenses" id="total_expenses">
-                </div>
-                <div class="col-4">
-                    <h2>Surplus/Deficit:</h2>
-                    <input type="number" name="surplus_deficit" id="surplus_deficit">
-                </div>
-            </div>
-
-            <div class="row text-center">
-                <div class="col-4">
-                    <h4>Needs</h4>
-                </div>
-                <div class="col-4">
-                    <h4>Savings</h4>
-                </div>
-                <div class="col-4">
-                    <h4>Wants</h4>
-                </div>
-            </div>
-      
-            <div class="row" id="expense-containers">
-                <div class="col-4">
-                    <div class="grid-container text-success" id="needs-container">
+            <div class="row">
+                <div class="col-lg-4 col-sm-12">
+                    <h3 class="text-xl text-center" id="white_outlined_header">Needs</h3>
+                    <div class="list-group text-success" id="needs-container">
                         <div class="grid-item bg-dark border-gray">
                             <h5>Housing</h5>
                             <input type="number" name="housing">
@@ -67,14 +64,18 @@
                             <h5>Debt Payments</h5>
                             <input type="number" name="debt payments">
                         </div>
-                        <div class="grid-item bg-dark">
-                            <button onclick="showExpensePopup('needs')">Add Expense</button>
-                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <button
+                            class='mt-2 mb-3 py-2 px-4 border border-3 border-success rounded fw-bold'
+                            onclick="showExpensePopup('needs')"
+                            >Add Expense
+                        </button>
                     </div>
                 </div>
-
-                <div class="col-4">
-                    <div class="grid-container text-success" id="savings-container">
+                <div class="col-lg-4 col-sm-12 mt-4 mt-md-0">
+                    <h3 class="text-xl text-center" id="white_outlined_header">Savings</h3>
+                    <div class="list-group text-success" id="savings-container">
                         <div class="grid-item bg-dark border-gray">
                             <h5>Emergency Fund</h5>
                             <input type="number" name="emergency fund">
@@ -87,58 +88,75 @@
                             <h5>Vacation</h5>
                             <input type="number" name="vacation">
                         </div>
-                        <div class="grid-item bg-dark">
-                            <button onclick="showExpensePopup('savings')">Add Expense</button>
-                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <button
+                            class='mt-2 mb-3 py-2 px-4 border border-3 border-success rounded fw-bold'
+                            onclick="showExpensePopup('savings')"
+                            >Add Expense
+                        </button>
                     </div>
                 </div>
-
-                <div class="col-4">
-                    <div class="grid-container text-success" id="wants-container">
+                <div class="col-lg-4 col-sm-12 mt-4 mt-md-0">
+                    <h3 class="text-xl text-center" id="white_outlined_header">Wants</h3>
+                    <div class="list-group text-success" id="wants-container">
                         <div class="grid-item bg-dark border-gray">
-                            <h5>Entertainment</h5>
-                            <input type="number" name="entertainment">
-                        </div>
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Dining Out</h5>
-                            <input type="number" name="dining out">
+                            <h5>Emergency Fund</h5>
+                            <input type="number" name="emergency fund">
                         </div>
                         <div class="grid-item bg-dark border-gray">
-                            <h5>Hobbies</h5>
-                            <input type="number" name="hobbies">
+                            <h5>Retirement</h5>
+                            <input type="number" name="retirement">
                         </div>
-                        <div class="grid-item bg-dark">
-                            <button onclick="showExpensePopup('wants')">Add Expense</button>
+                        <div class="grid-item bg-dark border-gray">
+                            <h5>Vacation</h5>
+                            <input type="number" name="vacation">
                         </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <button
+                            class='mt-2 mb-3 py-2 px-4 border border-3 border-success rounded fw-bold'
+                            onclick="showExpensePopup('wants')"
+                            >Add Expense
+                        </button>
                     </div>
                 </div>
             </div>
+        </div>
+        
 
-            <div class="text-center mt-3">
-                <button onclick="resetValues()">
-                    Reset
-                </button>
+            <!-- Reset Button -->
+        <div class="text-center mt-4">
+            <button 
+                class="mb-3 py-2 px-4 border border-3 border-success rounded fw-bold"
+                onclick="resetValues()"
+                >Reset
+            </button>
+        </div>
+    
+
+    
+
+        <!-- Popup for user added / custom expenses -->
+        <div id="expense-popup" class="expense-popup bg-dark text-success border border-3 border-success rounded">
+            <div class="expense-popup-content p-5 text-center">
+                <h2 class="mb-4">Add Expense</h2>
+                <input type="text" id="expense-name-input" placeholder="Expense Name" required>
+                <input type="number" id="expense-value-input" placeholder="Expense Value">
+                <div class="expense-popup-actions d-flex justify-content-evenly mt-4">
+                    <button class='py-2 px-4 border border-3 border-success rounded fw-bold' onclick="saveExpense()">Save</button>
+                    <button class='py-2 px-4 border border-3 border-success rounded fw-bold' onclick="closePopup()">Cancel</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="expense-popup" class="expense-popup bg-dark text-success">
-        <div class="expense-popup-content">
-            <h4>Add Expense</h4>
-            <input type="text" id="expense-name-input" placeholder="Expense Name" required>
-            <input type="number" id="expense-value-input" placeholder="Expense Value">
-            <div class="expense-popup-actions">
-                <button onclick="saveExpense()">Save</button>
-                <button onclick="closePopup()">Cancel</button>
-            </div>
-        </div>
     </div>
 
     
     <script>
+        // Initiate currentData object, get current_user.token, and intiate checkForData()
         const token = "{{ current_user.token }}"
         let currentData = {};
-
         checkForData()
 
         /* Check to see if data already exists for user. If so, call updateBudgetPage() to set data.
@@ -258,9 +276,7 @@
 
         // Calculate the total expenses by getting the sum of all values in each expense category
         function calculateTotalExpenses(expense_list) {
-            console.log(expense_list)
             const values = Object.values(expense_list);
-            console.log(values)
             return values.reduce((total, expenseValue) => total + expenseValue, 0.00);
         }
 
@@ -286,7 +302,7 @@
 
                     // Create a div for the expense
                     const expenseDiv = document.createElement('div');
-                    expenseDiv.classList.add('grid-item', 'bg-dark', 'border-gray');
+                    expenseDiv.classList.add('d-flex', 'justify-content-between', 'bg-dark', 'border-gray', 'p-3', 'my-2', 'rounded');
 
                     // Create an h5 element for the category name
                     const expenseNameHeader = document.createElement('h5');
@@ -300,7 +316,7 @@
                     expenseValueInput.type = 'number';
                     expenseValueInput.name = category;
                     expenseValueInput.value = formatCurrency(expenseValue);
-                    expenseValueInput.classList.add('expense-input')
+                    expenseValueInput.classList.add('expense-input', 'col-3', 'text-end', 'rounded')
 
                     // Add a data attribute to store the initial value
                     expenseValueInput.dataset.initialValue = expenseValue;
@@ -328,19 +344,20 @@
                 });
 
                 // Create a button to add expenses to this category
-                const addExpenseButton = document.createElement('button');
-                addExpenseButton.textContent = 'Add Expense';
-                addExpenseButton.onclick = () => showExpensePopup(categoryType);
-                categoryContainer.appendChild(addExpenseButton);
+            //     const addExpenseButton = document.createElement('button');
+            //     addExpenseButton.textContent = 'Add Expense';
+            //     addExpenseButton.onclick = () => showExpensePopup(categoryType);
+            //     categoryContainer.appendChild(addExpenseButton);
             });
+            
         }
+
 
 
         function formatCurrency(amount) {
             const roundedAmount = Math.round(amount * 100) / 100;
             return roundedAmount.toFixed(2)
         }
-
 
 
 
@@ -370,9 +387,10 @@
         // Function to handle updating data based on input value change
         function handleInputValueChange(event, category) {
             const inputValue = parseFloat(event.target.value);
+            console.log(typeof(inputValue))
 
             // Check if inputValue is a valid number
-            if (!isNaN(inputValue)) {
+            if (!isNaN(inputValue) && inputValue >= 0) {
                 // Round the inputValue to two decimal places
                 const roundedValue = Math.round(inputValue * 100) / 100;
                 const formattedValue = roundedValue.toFixed(2);
@@ -396,12 +414,14 @@
                 updateData();
             } else {
                 // Invalid input, reset the field to the previous value
-                event.target.value = category === 'income' ? currentData.income : currentData.expense_list[category];
+                alert('Not a valid input, resetting value')
+                updateBudgetPage(currentData)
             }
         }
 
 
 
+        // Event listener to trigger handleInputValueChange when user hits 'enter' in input field
         document.addEventListener('keyup', event => {
             if (event.key === 'Enter') {
                 const activeInput = document.activeElement;
@@ -413,7 +433,8 @@
         });
 
 
-    
+
+        // Popup to add an expense
         function showExpensePopup(category) {
             let popup = document.getElementById("expense-popup");
             popup.style.display = "block";
@@ -429,6 +450,7 @@
 
 
 
+        // Save new expense to respective category for user added / custom expenses
         function saveExpense() {
             let expenseNameInput = document.getElementById('expense-name-input');
             let expenseValueInput = document.getElementById('expense-value-input');
@@ -438,6 +460,12 @@
 
             if (!expenseName) {
                 alert('Please enter a valid expense name.');
+                return;
+            }
+            
+            // Check if the expense name exceeds 20 characters
+            if (expenseName.length > 25) {
+                alert('Expense name cannot exceed 20 characters.');
                 return;
             }
 
@@ -464,6 +492,7 @@
 
 
 
+        // Closer user added / custom expense popup
         function closePopup() {
             let popup = document.getElementById("expense-popup");
             popup.style.display = "none";
@@ -471,6 +500,7 @@
 
 
 
+        // Reset all values back to default (gets rid of user added / custom expenses)
         function resetValues() {
             currentData = {
                 expense_list: {
@@ -494,7 +524,6 @@
                 total_expenses: 0.00,
                 surplus_deficit: 0.00
             }
-
             // Update the data in the database with the default data
             fetch('/api/updateexpenses', {
                 method: 'PUT',
@@ -515,7 +544,6 @@
                 alert('An error occurred while updating data. Please try again.');
             });
         }
-
 
     </script>
 

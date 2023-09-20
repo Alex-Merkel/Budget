@@ -21,17 +21,17 @@
                 data-bs-target="#navmenu"
             ><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navmenu">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto text-center">
                     <li class="nav-item">
                         <a href="{{ url_for('site.index') }}" class="nav-link text-success">Home</a>
                     </li>
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item">
                         <a href="{{ url_for('site.budget') }}" class="nav-link text-success">Budget</a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ url_for('site.profile') }}" class="nav-link text-success">Profile</a>
                     </li>
-                    {% if current_user.is_authenticated %}
                     <li class="nav-item">
                         <a href="{{ url_for('auth.logout') }}" class="nav-link text-success">Logout</a>
                     </li>
