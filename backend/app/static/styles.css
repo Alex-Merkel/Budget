@@ -29,3 +29,39 @@ button:hover {
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
+
+#profile_background {
+    background-image: url('../../static/img/profileBackground.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100vh;
+}
+
+#authentication_background {
+    background-image: url('../../static/img/homeBackground.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100vh;
+}
+
+.nav-link:hover {
+    color: white !important; 
+}
+
+#budget_link:hover {
+    color: white !important; 
+}
+
+.navbar-toggler {
+    border-color: #28a745 !important;
+}
+
+.positive {
+    color: green;
+}
+
+.negative {
+    color: red;
+}

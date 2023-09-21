@@ -18,12 +18,14 @@
             {{ form.first_name(class = 'form-control', placeholder = 'Enter first name here...') }}
         </fieldset>
     </div>
-
+    <div class="form-group">
         <fieldset id="last-field">
             <h6>Last name</h6>
             {{ form.last_name(class = 'form-control', placeholder = 'Enter last name here...') }}
         </fieldset>
-
-        {{ form.submit_button(class = "btn btn-primary btn-block mt-2") }}
+    </div>
+    <div class="text-center mt-4">
+        {{ form.submit_button(class = "btn btn-success") }}
+    </div>
 
 </form>

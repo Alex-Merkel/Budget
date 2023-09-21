@@ -20,15 +20,15 @@
             <div class="row text-center">
                 <div class="col-lg-4">
                     <h2 class="text-xl" id="white_outlined_header">Monthly Income:</h2>
-                    <input class="text-center" type="number" name="income" id="income" onblur="handleInputValueChange(event, 'income')">
+                    <input class="text-center fw-bold" type="number" name="income" id="income" onblur="handleInputValueChange(event, 'income')">
                 </div>
                 <div class="col-lg-4">
                     <h2 class="text-xl" id="white_outlined_header">Total Expenses:</h2>
-                    <input class="text-center" type="number" name="total_expenses" id="total_expenses">
+                    <input class="text-center fw-bold" type="number" name="total_expenses" id="total_expenses" readonly>
                 </div>
                 <div class="col-lg-4">
                     <h2 class="text-xl" id="white_outlined_header">Surplus/Deficit:</h2>
-                    <input class="text-center" type="number" name="surplus_deficit" id="surplus_deficit">
+                    <input class="text-center fw-bold" type="number" name="surplus_deficit" id="surplus_deficit" readonly>
                 </div>
             </div>
         </div>
@@ -39,31 +39,8 @@
             <div class="row">
                 <div class="col-lg-4 col-sm-12">
                     <h3 class="text-xl text-center" id="white_outlined_header">Needs</h3>
+                    <!-- Needs Container Setup -->
                     <div class="list-group text-success" id="needs-container">
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Housing</h5>
-                            <input type="number" name="housing">
-                        </div>
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Transportation</h5>
-                            <input type="number" name="transportation">
-                        </div>
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Groceries</h5>
-                            <input type="number" name="groceries">
-                        </div>
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Utilities</h5>
-                            <input type="number" name="utilities">
-                        </div>
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Healthcare</h5>
-                            <input type="number" name="healthcare">
-                        </div>
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Debt Payments</h5>
-                            <input type="number" name="debt payments">
-                        </div>
                     </div>
                     <div class="text-center mt-2">
                         <button
@@ -75,19 +52,8 @@
                 </div>
                 <div class="col-lg-4 col-sm-12 mt-4 mt-md-0">
                     <h3 class="text-xl text-center" id="white_outlined_header">Savings</h3>
+                    <!-- Savings Container Setup -->
                     <div class="list-group text-success" id="savings-container">
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Emergency Fund</h5>
-                            <input type="number" name="emergency fund">
-                        </div>
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Retirement</h5>
-                            <input type="number" name="retirement">
-                        </div>
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Vacation</h5>
-                            <input type="number" name="vacation">
-                        </div>
                     </div>
                     <div class="text-center mt-2">
                         <button
@@ -99,19 +65,8 @@
                 </div>
                 <div class="col-lg-4 col-sm-12 mt-4 mt-md-0">
                     <h3 class="text-xl text-center" id="white_outlined_header">Wants</h3>
+                    <!-- Wants Container Setup -->
                     <div class="list-group text-success" id="wants-container">
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Emergency Fund</h5>
-                            <input type="number" name="emergency fund">
-                        </div>
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Retirement</h5>
-                            <input type="number" name="retirement">
-                        </div>
-                        <div class="grid-item bg-dark border-gray">
-                            <h5>Vacation</h5>
-                            <input type="number" name="vacation">
-                        </div>
                     </div>
                     <div class="text-center mt-2">
                         <button
@@ -184,7 +139,8 @@
                 } else {
                     // If data found in db, set currentData to data and display page with information:
                     currentData = data;
-                    updateBudgetPage(currentData);
+                    updateBudgetPage(currentData)
+                    updateSurplusDeficitColor();
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -342,12 +298,6 @@
                     expenseDiv.appendChild(expenseValueInput);
                     categoryContainer.appendChild(expenseDiv);
                 });
-
-                // Create a button to add expenses to this category
-            //     const addExpenseButton = document.createElement('button');
-            //     addExpenseButton.textContent = 'Add Expense';
-            //     addExpenseButton.onclick = () => showExpensePopup(categoryType);
-            //     categoryContainer.appendChild(addExpenseButton);
             });
             
         }
@@ -387,7 +337,6 @@
         // Function to handle updating data based on input value change
         function handleInputValueChange(event, category) {
             const inputValue = parseFloat(event.target.value);
-            console.log(typeof(inputValue))
 
             // Check if inputValue is a valid number
             if (!isNaN(inputValue) && inputValue >= 0) {
@@ -410,8 +359,13 @@
                 currentData.total_expenses = calculateTotalExpenses(currentData.expense_list);
                 currentData.surplus_deficit = (parseFloat(currentData.income) - currentData.total_expenses).toFixed(2);
 
+                // Apply text color based on surplus_deficit value
+                const surplusDeficitElement = document.getElementById('surplus_deficit');
+                const surplusDeficitValue = parseFloat(currentData.surplus_deficit);
+
                 // Update data in the database
                 updateData();
+                updateSurplusDeficitColor();
             } else {
                 // Invalid input, reset the field to the previous value
                 alert('Not a valid input, resetting value')
@@ -476,6 +430,12 @@
                 return;
             }
 
+            // Prevent negative values
+            if (expenseValue < 0) {
+                alert('Expense value cannot be negative.');
+                return;
+            }
+
             // Update the currentData.expense_list with the new expenseName and expenseValue
             currentData.expense_list[expenseName] = expenseValue;
 
@@ -483,10 +443,11 @@
             currentData[category].push(expenseName);
             // Re-calculate total_expenses and surplus_deficit
             currentData.total_expenses = calculateTotalExpenses(currentData.expense_list);
-            currentData.surplus_deficit = currentData.income - currentData.total_expenses;
+            currentData.surplus_deficit = (parseFloat(currentData.income) - currentData.total_expenses).toFixed(2);
 
-            // Update data in the database and close Popup
+            // Update data in the database, set surplus/deficit color and close Popup
             updateData();
+            updateSurplusDeficitColor();
             closePopup();
         }
 
@@ -538,11 +499,30 @@
                 // Update the page with the updated data
                 currentData = data;
                 updateBudgetPage(currentData);
+                updateSurplusDeficitColor();
             })
             .catch(error => {
                 console.error('Error updating data:', error);
                 alert('An error occurred while updating data. Please try again.');
             });
+        }
+
+
+
+        // Change color of surplus/deficit based on value being positive or negative
+        function updateSurplusDeficitColor() {
+            const surplusDeficitElement = document.getElementById('surplus_deficit');
+            const surplusDeficitValue = parseFloat(currentData.surplus_deficit);
+
+            if (surplusDeficitValue > 0) {
+                surplusDeficitElement.classList.add('positive');
+                surplusDeficitElement.classList.remove('negative');
+            } else if (surplusDeficitValue < 0) {
+                surplusDeficitElement.classList.add('negative');
+                surplusDeficitElement.classList.remove('positive');
+            } else {
+                surplusDeficitElement.classList.remove('positive', 'negative');
+            }
         }
 
     </script>

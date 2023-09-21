@@ -22,6 +22,7 @@ def create_app():
     app.config.from_object(Config)
     db.init_app(app)
     login_manager.init_app(app)
+    login_manager.login_view = "auth.signin"
     ma.init_app(app)
     migrate = Migrate(app, db)
 
