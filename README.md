@@ -3,7 +3,7 @@
 
 ## Project Description
 
-A sophisticated budgeting platform using Flask, Python, SQL, JavaScript, PostgreSQL, HTML, and CSS. The application boasts a user-friendly interface with dynamic divs and containers that empower users to effortlessly monitor, analyze, and manage their financial activities in real-time.
+A sophisticated budgeting platform using Flask, Python, SQL, JavaScript, PostgreSQL, HTML, and CSS. The application boasts a user-friendly interface with dynamic containers that empower users to effortlessly monitor, analyze, and manage their financial activities in real-time.
 
 ### Key Features:
 - **Default Expense Categories:** Includes pre-defined or base expense categories.
