@@ -55,7 +55,7 @@ A sophisticated budgeting platform using Flask, Python, SQL, JavaScript, Postgre
 - Upon successful login, navigate to the 'Budget' page within the application.
 
 3. Add Expenses:
-- Begin by adding expenses for the default fields. Input your expenses for various categories provided.
+- Begin by adding values for the default fields you wish to use.
 
 4. Customize Expenses:
 - To add a custom expense under a specific category, select the 'Add Expense' option below the respective category.
