@@ -7,7 +7,7 @@ A sophisticated budgeting platform using Flask, Python, SQL, JavaScript, Postgre
 
 ### Key Features:
 - **Default Expense Categories:** Includes pre-defined or base expense categories.
-- **Custom Expenses:** Allows users to create and manage their custom expenses tailored to their financial needs.
+- **Custom Expenses:** Allows users to create and manage their custom expenses tailored to their financial needs, limited to 10 total expenses per category.
 - **Dynamic Div Rendering:** Dynamically generates divs for both default and custom expenses, ensuring a flexible and responsive interface.
 
 
